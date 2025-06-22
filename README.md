@@ -1,36 +1,119 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+[ Hero Section (optional): 2LYP Token Summary with Logo & Tagline ]
 
-## Getting Started
+[ 🔷 Token Summary Box ]
+Quick facts: Name, Symbol, Total Supply, Burn Model
 
-First, run the development server:
+[ 📊 Tokenomics & Burn Charts ]
+Pie Chart + Line Chart
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+[ 📈 Live Stats Box ]
+Live: Total Supply, Burned, Circulating, Holders
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+[ ⏳ Next Burn Timer ]
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+[ 🛡 Security & Audit Section ]
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+[ 📝 Activity Feed ]
 
-## Learn More
+[ 🔗 Social & Community Links ]
 
-To learn more about Next.js, take a look at the following resources:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. 🏠 Home / Dashboard (Public)
+Overview of 2LYP: what it is, use cases
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Show real-time stats:
 
-## Deploy on Vercel
+✅ Total supply
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+✅ Current burned amount
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+✅ Circulating supply
+
+✅ Number of wallets holding 2LYP
+
+✅ Next burn countdown (if implemented)
+
+Charts: Burn rate over time, supply vs. max
+
+Access: 🟢 Public (all users)
+
+2. 📊 Tokenomics Page (Public)
+Embed or render 2LYP-Tokenomics.pdf
+
+Burn mechanism and deflation visuals
+
+Vesting allocations (Team, Advisors, Investors)
+
+Allocation pie chart
+
+CSV or table view of recipients and vesting data
+
+Access: 🟢 Public
+
+3. 🚰 Faucet Page (User Interaction)
+Button to faucetMint() if cooldown passed
+
+Shows:
+
+Faucet drip amount
+
+Cooldown remaining
+
+Transaction status
+
+Access: 🟢 All wallet users
+Function used: faucetMint()
+
+4. 🎁 Airdrop Claim Page
+If user is in airdropList, shows:
+
+“You’re eligible for ___ tokens”
+
+Claim button using claimAirdrop()
+
+Status: Claimed / Not Claimed
+
+Access: 🟢 Users eligible for airdrop
+Function used: claimAirdrop()
+
+5. ⏳ Vesting Dashboard (User-Specific)
+For any vested user (team, advisor, investor):
+
+View: total allocated, released, unreleased
+
+Click: releaseVestedTokens()
+
+Also show vesting timeline bar (using getVestedAmount())
+
+Access: 🟢 Vesting users
+Functions used: releaseVestedTokens(), getVestedAmount()
+
+6. 🛠 Admin Panel (Restricted)
+For contract owner only (either EOA or Gnosis Safe multisig).
+Suggested features:
+
+➤ 📈 Tokenomics Controls
+Call initTokenomics() (once)
+
+View status (whether initialized)
+
+➤ ✳️ Airdrop Manager
+Upload wallet list + token amount CSV
+
+Call setAirdropList(address[], uint256[])
+
+➤ 🧪 Faucet Controls
+Adjust drip amount or cooldown via updateFaucetSettings()
+
+➤ 📤 Vesting Manager
+Add custom vesting via addVesting(address, amount, cliff, duration)
+
+Show existing vesting entries
+
+➤ 🔐 Rescue Feature
+Call rescueERC20(token, amount, to) (for mis-sent tokens)
+
+➤ 🔒 Admin Identity Check
+Disable functions if not connected as owner()
+
+Access: 🔴 Only contract owner
