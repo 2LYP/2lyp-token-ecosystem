@@ -8,8 +8,6 @@ import Footer from "./footer/page";
 export default function Home() {
   return (
     <>
-
-      <Navbar />
       <OverviewPage />
       <Footer />
     </>

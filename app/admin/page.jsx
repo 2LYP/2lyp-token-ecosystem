@@ -14,26 +14,28 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import Footer from "../footer/page";
+import { useIsAdmin } from "@/hooks/useIsAdmin";
 
 const OWNER_ADDRESS = "0xYourAdminAddress"; // Replace with actual owner
 
 export default function AdminHomePage() {
   const { address, isConnected } = useAccount();
-  const [isAdmin, setIsAdmin] = useState(false);
+  const { isAdmin, isLoading } = useIsAdmin();
 
-  useEffect(() => {
-    if (isConnected && address?.toLowerCase() === OWNER_ADDRESS.toLowerCase()) {
-      setIsAdmin(true);
-    }
-  }, [address, isConnected]);
+  // useEffect(() => {
+  //   if (isConnected && address?.toLowerCase() === OWNER_ADDRESS.toLowerCase()) {
+  //     setIsAdmin(true);
+  //   }
+  // }, [address, isConnected]);
 
   if (!isConnected) {
     return <p className="text-center py-10 text-red-500">⚠️ Please connect your wallet.</p>;
   }
 
-  if (isAdmin) {
+  if (!isAdmin) {
     return <p className="text-center py-10 text-red-500">🚫 Access Denied. Only contract owner can view this panel.</p>;
   }
+
 
   return (
     <>

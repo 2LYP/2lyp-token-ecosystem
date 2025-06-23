@@ -9,6 +9,7 @@ import LiveStatsBox from './components/LiveStatsBox';
 import SecurityAuditSection from './components/SecurityAuditSection';
 import ActivityFeed from './components/ActivityFeed';
 import CommunityLinks from './components/CommunityLinks';
+import Navbar from '../navbar/page';
 
 const tokenomicsData = [
   { name: 'Team & Founders', value: 20 },
@@ -40,6 +41,8 @@ const renderCustomLabel = ({ name, percent }) => {
 
 export default function OverviewPage() {
   return (
+    <>
+    <Navbar />
     <div className="p-6 space-y-6">
       <section className="text-center space-y-2">
         <h1 className="text-4xl font-bold">2LYP Token Overview</h1>
@@ -128,5 +131,6 @@ export default function OverviewPage() {
 
       <CommunityLinks />
     </div>
+    </>
   );
 }

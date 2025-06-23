@@ -1,27 +1,67 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Loader2 } from "lucide-react";
-import { useAccount } from "wagmi";
+import { useAccount, useReadContract, useWriteContract } from "wagmi";
+import { CONTRACT_ABI, CONTRACT_ADDRESS } from "@/lib/constants";
+
 import Navbar from "../navbar/page";
 import Footer from "../footer/page";
+import { formatEther } from "viem"; // already imported
 
 export default function FaucetPage() {
+  const { writeContractAsync } = useWriteContract();
   const { address, isConnected } = useAccount();
+  const [cooldown, setCooldown] = useState(0);
+  const [status, setStatus] = useState("idle"); // idle | pending | success | error
 
-  const [cooldown, setCooldown] = useState(120); // seconds
-  const [status, setStatus] = useState("idle"); // idle | pending | success
-  const dripAmount = "100 2LYP";
+  const { data: rawDripAmount } = useReadContract({
+    address: CONTRACT_ADDRESS,
+    abi: CONTRACT_ABI,
+    functionName: "faucetDrip",
+  });
 
+  const dripAmount = rawDripAmount ? `${formatEther(rawDripAmount)} 2LYP` : "Loading...";
+
+  // Read last claim timestamp from contract
+  const { data: lastClaim } = useReadContract({
+    address: CONTRACT_ADDRESS,
+    abi: CONTRACT_ABI,
+    functionName: "lastFaucetClaim",
+    args: [address],
+    enabled: !!address,
+  });
+
+  const { data: cooldownSeconds } = useReadContract({
+    address: CONTRACT_ADDRESS,
+    abi: CONTRACT_ABI,
+    functionName: "faucetCoolDown",
+  });
+
+
+  // Update cooldown based on lastClaim
   useEffect(() => {
+    if (!lastClaim) return;
+
     const interval = setInterval(() => {
-      setCooldown((prev) => (prev > 0 ? prev - 1 : 0));
+      const now = Math.floor(Date.now() / 1000);
+      const remaining = cooldownSeconds
+        ? Math.max(0, Number(cooldownSeconds) - (now - Number(lastClaim)))
+        : 0;
+      setCooldown(remaining);
     }, 1000);
+
     return () => clearInterval(interval);
-  }, []);
+  }, [lastClaim]);
 
   const formatCooldown = (seconds) => {
     const m = String(Math.floor(seconds / 60)).padStart(2, "0");
@@ -29,15 +69,23 @@ export default function FaucetPage() {
     return `${m}:${s}`;
   };
 
-  const handleClaim = () => {
+  const handleClaim = async () => {
     if (!isConnected || cooldown > 0 || status === "pending") return;
-    setStatus("pending");
 
-    // Simulated claim
-    setTimeout(() => {
+    setStatus("pending");
+    try {
+      const tx = await writeContractAsync({
+        address: CONTRACT_ADDRESS,
+        abi: CONTRACT_ABI,
+        functionName: "faucetMint",
+      });
+
       setStatus("success");
-      setCooldown(300); // simulate backend cooldown update
-    }, 2000);
+      console.log("faucet tx:" + tx);
+    } catch (err) {
+      console.error("❌ Faucet Claim Error:", err);
+      setStatus("error");
+    }
   };
 
   return (
@@ -105,13 +153,19 @@ export default function FaucetPage() {
             ) : !isConnected ? (
               "Connect Wallet to Claim"
             ) : (
-              "Claim 100 2LYP Tokens"
+              `Claim ${dripAmount} Tokens`
             )}
           </Button>
 
           {status === "success" && (
             <p className="mt-3 text-green-600 text-sm font-medium">
               ✅ Faucet claimed successfully! Tokens will appear shortly.
+            </p>
+          )}
+
+          {status === "error" && (
+            <p className="mt-3 text-red-600 text-sm font-medium">
+              ❌ Error while claiming. Please check the console.
             </p>
           )}
         </div>

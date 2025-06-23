@@ -10,22 +10,39 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
+import { parseEther } from "viem";
+import { useWriteContract } from "wagmi";
+import { CONTRACT_ABI, CONTRACT_ADDRESS } from "@/lib/constants";
 
 export default function RescueAdmin() {
   const [tokenAddress, setTokenAddress] = useState("");
   const [amount, setAmount] = useState("");
   const [recipient, setRecipient] = useState("");
-  const [status, setStatus] = useState("idle"); // idle | rescuing | success
+  const [status, setStatus] = useState("idle"); // idle | rescuing | success | error
 
-  const handleRescue = () => {
+  const { writeContractAsync } = useWriteContract();
+
+  const handleRescue = async () => {
     if (!tokenAddress || !amount || !recipient) return;
 
     setStatus("rescuing");
 
-    // Simulated delay to mimic contract call
-    setTimeout(() => {
+    try {
+      await writeContractAsync({
+        address: CONTRACT_ADDRESS,
+        abi: CONTRACT_ABI,
+        functionName: "rescueERC20",
+        args: [tokenAddress, parseEther(amount), recipient],
+      });
+
       setStatus("success");
-    }, 2000);
+      setTokenAddress("");
+      setAmount("");
+      setRecipient("");
+    } catch (err) {
+      console.error("❌ Rescue Error:", err);
+      setStatus("error");
+    }
   };
 
   return (
@@ -38,11 +55,9 @@ export default function RescueAdmin() {
       </CardHeader>
 
       <CardContent className="space-y-6">
-        {/* Explanation */}
         <div className="text-sm text-muted-foreground leading-relaxed">
-          Use this feature if a user or admin accidentally sends ERC-20 tokens
-          to the contract address. The rescued tokens will be forwarded to the
-          provided wallet address.
+          Use this feature if tokens are mistakenly sent to the contract.
+          The rescued tokens will be transferred to the recipient address.
           <div className="mt-2">
             Function:
             <code className="bg-muted px-1 py-0.5 rounded text-xs ml-1">
@@ -51,7 +66,6 @@ export default function RescueAdmin() {
           </div>
         </div>
 
-        {/* Form Fields */}
         <div className="space-y-4">
           <div className="space-y-1">
             <label className="text-sm font-medium">Token Address</label>
@@ -81,15 +95,19 @@ export default function RescueAdmin() {
             />
           </div>
 
-          {/* Button */}
           <Button onClick={handleRescue} disabled={status === "rescuing"}>
             {status === "rescuing" ? "Rescuing..." : "🚨 Rescue Tokens"}
           </Button>
 
-          {/* Success Message */}
           {status === "success" && (
             <p className="text-green-600 text-sm font-medium mt-2">
               ✅ Rescue transaction submitted successfully.
+            </p>
+          )}
+
+          {status === "error" && (
+            <p className="text-red-600 text-sm font-medium mt-2">
+              ❌ Failed to rescue tokens. See console for details.
             </p>
           )}
         </div>
