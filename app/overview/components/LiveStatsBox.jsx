@@ -1,14 +1,15 @@
 'use client';
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { useState, useEffect } from 'react';
+import { formatEther } from "viem";
 
-const stats = [
-  { label: 'Total Supply', value: '10,000,000 2LYP' },
-  { label: 'Burned', value: '250,000 2LYP' },
-  { label: 'Circulating Supply', value: '9,750,000 2LYP' },
-  { label: 'Wallet Holders', value: '1,432' },
-];
+import {
+  useTotalSupply,
+  useMaxSupply,
+  useTotalBurned
+} from "@/hooks/read/useOverviewStats";
 
 function getRemainingTime(targetDate) {
   const now = new Date().getTime();
@@ -25,15 +26,76 @@ function getRemainingTime(targetDate) {
 }
 
 export default function LiveStatsBox() {
+  const { data: totalSupply } = useTotalSupply();
+  const { data: maxSupply } = useMaxSupply();
+  const { data: burnedAmount } = useTotalBurned();
+  
+  console.log("🔥 burnedAmount:", burnedAmount);
+
+
   const [timeLeft, setTimeLeft] = useState(getRemainingTime(new Date('2025-07-01T00:00:00Z')));
 
+  // let burnedAmount = 250_000; // You can update this dynamically if needed
+
+
   useEffect(() => {
+
     const interval = setInterval(() => {
       setTimeLeft(getRemainingTime(new Date('2025-07-01T00:00:00Z')));
     }, 1000);
 
     return () => clearInterval(interval);
   }, []);
+
+  // Parse values
+  
+  const totalSupplyFormatted = totalSupply ? parseFloat(formatEther(totalSupply)).toLocaleString() : null;
+  const maxSupplyFormatted = maxSupply ? parseFloat(formatEther(maxSupply)).toLocaleString() : null;
+  // const circulatingSupply =
+  //   totalSupply && burnedAmount
+  //     ? (parseFloat(formatEther(totalSupply)) - burnedAmount).toLocaleString()
+  //     : null;
+
+  const burnedAmountFormatted =
+  burnedAmount !== undefined
+    ? parseFloat(formatEther(burnedAmount)).toLocaleString()
+    : null;
+
+  const circulatingSupply =
+    totalSupply !== undefined && burnedAmount !== undefined
+      ? (
+          parseFloat(formatEther(totalSupply)) -
+          parseFloat(formatEther(burnedAmount))
+        ).toLocaleString()
+      : null;
+
+
+const stats = [
+  {
+    label: 'Total Supply',
+    value: totalSupply !== undefined
+      ? `${parseFloat(formatEther(totalSupply)).toLocaleString()} 2LYP`
+      : 'Loading...',
+  },
+  {
+    label: 'Burned',
+    value: burnedAmount !== undefined
+      ? `${burnedAmountFormatted} 2LYP`
+      : 'Loading...',
+  },
+  {
+    label: 'Circulating Supply',
+    value: circulatingSupply !== null
+      ? `${circulatingSupply} 2LYP`
+      : 'Loading...',
+  },
+  {
+    label: 'Wallet Holders',
+    value: '1,432', // placeholder
+  },
+];
+
+
 
   return (
     <Card className="w-full">

@@ -8,23 +8,70 @@ import {
   CardContent
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import {
+  useTokenomicsStatus,
+  useInitTokenomics
+} from "@/hooks/admin/useTokenomicsControls"; // your Wagmi hooks
+import { useWriteContract, useReadContract } from "wagmi";
+import { CONTRACT_ABI, CONTRACT_ADDRESS } from "@/lib/constants";
 
 export default function TokenomicsAdmin() {
-  // Tokenomics state: you can replace this with on-chain read in future
-  const [isInitialized, setIsInitialized] = useState(false);
-  const [status, setStatus] = useState("idle"); // idle | pending | success
+  const {
+    writeContract,
+    isPending,
+    isSuccess,
+    isError,
+    error
+  } = useWriteContract();
 
-  const handleInit = () => {
-    if (isInitialized) return;
+  const [status, setStatus] = useState("idle"); // idle | pending | success | error
 
+  useEffect(() => {
+  if (isPending && status !== "pending") {
     setStatus("pending");
+  }
 
-    // Placeholder logic (simulate contract call delay)
-    setTimeout(() => {
-      setIsInitialized(true);
-      setStatus("success");
-    }, 2000);
+  if (isSuccess && status !== "success") {
+    setStatus("success");
+    toast.success("🎉 Tokenomics initialized successfully!");
+    // Move refetch outside useEffect and do it manually after tx completes
+  }
+
+  if (isError && status !== "error") {
+    setStatus("error");
+    toast.error(`❌ Failed to initialize: ${error?.message}`);
+  }
+}, [isPending, isSuccess, isError, status]);
+
+
+  
+
+  const { data: isInitialized, refetch } = useReadContract({
+    address: CONTRACT_ADDRESS,
+    abi: CONTRACT_ABI,
+    functionName: "tokenomicsInitialized",
+    watch: true,
+  });
+
+  const handleInit = async () => {
+    try {
+      writeContract({
+        address: CONTRACT_ADDRESS,
+        abi: CONTRACT_ABI,
+        functionName: "initTokenomics",
+        onSuccess() {
+          toast.success("🎉 Tokenomics initialized!");
+          refetch();
+        },
+        onError(error) {
+          toast.error(`❌ Failed to initialize: ${error.message}`);
+        },
+      });
+    } catch (err) {
+      toast.error("Something went wrong.");
+    }
   };
 
   return (
@@ -40,7 +87,11 @@ export default function TokenomicsAdmin() {
         {/* Status Display */}
         <div>
           <p className="text-sm text-muted-foreground mb-1">Current Status:</p>
-          <p className={`text-base font-semibold ${isInitialized ? "text-green-600" : "text-orange-500"}`}>
+          <p
+            className={`text-base font-semibold ${
+              isInitialized ? "text-green-600" : "text-orange-500"
+            }`}
+          >
             {isInitialized ? "✅ Initialized" : "⚠️ Not Initialized"}
           </p>
         </div>
@@ -58,14 +109,14 @@ export default function TokenomicsAdmin() {
 
         {/* Button */}
         <Button
-          disabled={status === "pending" || isInitialized}
+          disabled={isPending || isInitialized}
           onClick={handleInit}
         >
-          {status === "pending"
+          {isPending
             ? "Initializing..."
             : isInitialized
-              ? "✅ Already Initialized"
-              : "🚀 Initialize Tokenomics"}
+            ? "✅ Already Initialized"
+            : "🚀 Initialize Tokenomics"}
         </Button>
 
         {/* Confirmation Message */}

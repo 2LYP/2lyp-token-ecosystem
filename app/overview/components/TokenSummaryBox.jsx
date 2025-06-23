@@ -3,7 +3,17 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 
+import {
+  useTotalSupply,
+  useMaxSupply,
+  useFaucetDrip,
+  useFaucetCooldown,
+  useTokenomicsStatus,
+} from "@/hooks/read/useOverviewStats";
+
 export default function TokenSummaryBox() {
+  const { data: totalSupply } = useTotalSupply();
+
   return (
     <Card className="w-full">
       <CardHeader>

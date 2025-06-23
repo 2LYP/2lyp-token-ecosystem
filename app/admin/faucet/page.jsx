@@ -10,29 +10,59 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState, useEffect } from "react";
+import { parseUnits } from "viem";
+import { useAccount, useReadContract, useWriteContract } from "wagmi";
+import { CONTRACT_ABI, CONTRACT_ADDRESS } from "@/lib/constants";
 
 export default function FaucetAdmin() {
-  // Simulated current values — replace these with useContractRead later
-  const [currentDrip, setCurrentDrip] = useState(100);
-  const [currentCooldown, setCurrentCooldown] = useState(3600);
-
   const [dripAmount, setDripAmount] = useState("");
   const [cooldown, setCooldown] = useState("");
-  const [status, setStatus] = useState("idle"); // idle | updating | updated
+  const [status, setStatus] = useState("idle");
 
-  const handleUpdate = () => {
+  // === Read Current Values ===
+  const { data: currentDripRaw } = useReadContract({
+    address: CONTRACT_ADDRESS,
+    abi: CONTRACT_ABI,
+    functionName: "faucetDrip",
+    watch: true,
+  });
+
+  const { data: currentCooldown } = useReadContract({
+    address: CONTRACT_ADDRESS,
+    abi: CONTRACT_ABI,
+    functionName: "faucetCoolDown",
+    watch: true,
+  });
+
+  const currentDrip = currentDripRaw
+    ? Number(currentDripRaw) / 10 ** 18
+    : null;
+
+  // === Write Function ===
+  const { writeContract, isPending, isSuccess } = useWriteContract();
+
+  const handleUpdate = async () => {
     if (!dripAmount || !cooldown) return;
 
     setStatus("updating");
 
-    // Simulate on-chain write + UI update
-    setTimeout(() => {
-      setCurrentDrip(Number(dripAmount));
-      setCurrentCooldown(Number(cooldown));
+    try {
+      await writeContract({
+        address: CONTRACT_ADDRESS,
+        abi: CONTRACT_ABI,
+        functionName: "updateFaucetSettings",
+        args: [
+          parseUnits(dripAmount, 18),
+          BigInt(cooldown),
+        ],
+      });
       setStatus("updated");
       setDripAmount("");
       setCooldown("");
-    }, 2000);
+    } catch (err) {
+      console.error("Faucet update error:", err);
+      setStatus("error");
+    }
   };
 
   return (
@@ -49,8 +79,8 @@ export default function FaucetAdmin() {
         <div className="border p-4 rounded-md bg-muted/40 text-sm">
           <p className="mb-1">🧾 <strong>Current Faucet Settings:</strong></p>
           <ul className="ml-4 list-disc list-inside">
-            <li><strong>Drip Amount:</strong> {currentDrip} 2LYP</li>
-            <li><strong>Cooldown:</strong> {currentCooldown} seconds</li>
+            <li><strong>Drip Amount:</strong> {currentDrip ?? "Loading..."} 2LYP</li>
+            <li><strong>Cooldown:</strong> {currentCooldown?.toString() ?? "Loading..."} seconds</li>
           </ul>
         </div>
 
@@ -87,14 +117,21 @@ export default function FaucetAdmin() {
 
           <Button
             onClick={handleUpdate}
-            disabled={status === "updating"}
+            disabled={isPending || status === "updating"}
           >
-            {status === "updating" ? "Updating..." : "🔄 Update Faucet Settings"}
+            {isPending || status === "updating"
+              ? "Updating..."
+              : "🔄 Update Faucet Settings"}
           </Button>
 
           {status === "updated" && (
             <p className="text-green-600 text-sm font-medium mt-2">
               ✅ Faucet settings updated successfully.
+            </p>
+          )}
+          {status === "error" && (
+            <p className="text-red-600 text-sm font-medium mt-2">
+              ❌ Failed to update faucet settings.
             </p>
           )}
         </div>

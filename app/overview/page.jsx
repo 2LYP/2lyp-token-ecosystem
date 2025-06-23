@@ -49,6 +49,8 @@ export default function OverviewPage() {
           <Button asChild variant="outline"><Link href="/airdrop">Claim Airdrop</Link></Button>
           <Button asChild><Link href="https://raw.githubusercontent.com/2LYP/2LYP-Tokenomics/a405cb8983ac719969b0ab11cfbde240bf9332ad/2LYP-Tokenomics.pdf" target="_blank">📄 View PDF</Link></Button>
           <Button asChild variant="ghost"><Link href="https://github.com/2LYP/2LYP-Tokenomics" target="_blank">🌐 GitHub Repo</Link></Button>
+          <Button asChild><Link href="https://amoy.polygonscan.com/token/0xb237681163e15d719a959c80eaa37a2a619334ea" target="_blank">Token Tracker(PolygonScan)</Link></Button>
+
         </div>
       </section>
 
