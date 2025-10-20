@@ -57,34 +57,33 @@ export default function OverviewPage() {
     <Navbar />
     <div className="p-6 space-y-6">
       <section className="text-center space-y-4">
-        <h1 className="text-4xl font-bold">2LYP Token Ecosystem</h1>
+        <h1 className="text-4xl font-bold">2LYP Token Hub</h1>
         <p className="text-gray-600 max-w-2xl mx-auto">
-          A comprehensive utility token powering the decentralized 2LYP ecosystem with advanced vesting, 
-          airdrop distribution, and community-driven tokenomics.
+          The central platform for managing and using the 2LYP utility token within our ecosystem. Access faucets, claim airdrops, monitor vesting schedules (for investors), and explore comprehensive tokenomics data all in one place.
         </p>
         <div className="flex justify-center gap-4 flex-wrap">
           <Button asChild size="lg">
-            <Link href="/faucet">🚰 Claim Faucet</Link>
+            <Link href="/faucet">Claim Faucet</Link>
           </Button>
           <Button asChild variant="outline" size="lg">
-            <Link href="/airdrop">🎁 Claim Airdrop</Link>
+            <Link href="/airdrop">Claim Airdrop</Link>
           </Button>
-          <Button asChild variant="outline" size="lg">
+          {/* <Button asChild variant="outline" size="lg">
             <Link href="/vesting">⏳ View Vesting</Link>
-          </Button>
+          </Button> */}
           <Button asChild variant="ghost" size="lg">
             <Link href="https://raw.githubusercontent.com/2LYP/2LYP-Tokenomics/a405cb8983ac719969b0ab11cfbde240bf9332ad/2LYP-Tokenomics.pdf" target="_blank">
-              📄 Whitepaper
+              Whitepaper
             </Link>
           </Button>
           <Button asChild variant="ghost" size="lg">
             <Link href="https://github.com/2LYP/2LYP-Tokenomics" target="_blank">
-              🌐 GitHub
+              GitHub
             </Link>
           </Button>
           <Button asChild variant="secondary" size="lg">
             <Link href="https://amoy.polygonscan.com/token/0x699D113717e562F35BC5949693a7c79745Aa60b2" target="_blank">
-              🔍 Contract Explorer
+              Contract Explorer
             </Link>
           </Button>
         </div>
@@ -108,7 +107,7 @@ export default function OverviewPage() {
         <Card className="h-[450px]">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              📊 Tokenomics Distribution
+              Tokenomics Distribution
               <Badge variant="outline">Live</Badge>
             </CardTitle>
           </CardHeader>
@@ -139,7 +138,7 @@ export default function OverviewPage() {
         <Card className="h-[450px]">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              🔐 Vesting & Allocation Status
+              Vesting & Allocation Status
               <Badge variant="secondary">Real-time</Badge>
             </CardTitle>
           </CardHeader>
@@ -165,8 +164,6 @@ export default function OverviewPage() {
           </CardContent>
         </Card>
       </section>
-
-      <SecurityAuditSection />
       
       <CommunityLinks /> 
     </div>

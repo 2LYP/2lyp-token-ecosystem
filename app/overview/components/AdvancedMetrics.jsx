@@ -113,7 +113,7 @@ export default function AdvancedMetrics() {
     <Card className="w-full">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          📈 Advanced Analytics
+          Advanced Analytics
           <Badge variant="default">Pro</Badge>
         </CardTitle>
       </CardHeader>

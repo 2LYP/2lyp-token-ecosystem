@@ -1,119 +1,57 @@
-[ Hero Section (optional): 2LYP Token Summary with Logo & Tagline ]
+# 2LYP Token Hub
 
-[ 🔷 Token Summary Box ]
-Quick facts: Name, Symbol, Total Supply, Burn Model
+2LYP Token Hub is a web dashboard and administration interface for the 2LYP token ecosystem. It provides real-time analytics, distribution and vesting insights, and admin controls for authorized accounts.
 
-[ 📊 Tokenomics & Burn Charts ]
-Pie Chart + Line Chart
-
-[ 📈 Live Stats Box ]
-Live: Total Supply, Burned, Circulating, Holders
-
-[ ⏳ Next Burn Timer ]
-
-[ 🛡 Security & Audit Section ]
-
-[ 📝 Activity Feed ]
-
-[ 🔗 Social & Community Links ]
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Next.js](https://img.shields.io/badge/Next.js-%5E15.0-000000?style=flat&logo=nextdotjs)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-%5E18.0-61DAFB?style=flat&logo=react)](https://reactjs.org/)
+[![Wagmi](https://img.shields.io/badge/Wagmi-viem-yellowgreen?style=flat)](https://wagmi.sh/)
+[![Viem](https://img.shields.io/badge/Viem-%E2%86%92-4CAF50?style=flat)](https://viem.sh/)
+[![Recharts](https://img.shields.io/badge/Recharts-%5E2.0-ff6f61?style=flat)](https://recharts.org/)
+[![MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 
-1. 🏠 Home / Dashboard (Public)
-Overview of 2LYP: what it is, use cases
+## Installation
 
-Show real-time stats:
+Use the package manager [npm](https://www.npmjs.com/) to install dependencies and run the development server.
 
-✅ Total supply
+```bash
+git clone <repository-url>
+cd 2lyp-token-ecosystem
+npm install
+```
 
-✅ Current burned amount
+## Usage
 
-✅ Circulating supply
+Start the development server:
 
-✅ Number of wallets holding 2LYP
+```bash
+npm run dev
+```
 
-✅ Next burn countdown (if implemented)
+Open the application at http://localhost:3000
 
-Charts: Burn rate over time, supply vs. max
+### Notes on usage
 
-Access: 🟢 Public (all users)
+- Connect a Web3 wallet (MetaMask or similar) to access wallet-dependent features.
+- Admin functionality is visible only when the connected account matches the contract owner; contract-level checks still apply.
 
-2. 📊 Tokenomics Page (Public)
-Embed or render 2LYP-Tokenomics.pdf
+## Contributing
 
-Burn mechanism and deflation visuals
+Pull requests are welcome. For major changes, open an issue first to discuss what you would like to change.
 
-Vesting allocations (Team, Advisors, Investors)
+Branch naming convention:
 
-Allocation pie chart
+- Features: `feature/<short-description>`
+- Bug fixes: `fix/<short-description>`
+- Chores: `chore/<short-description>`
+- Hotfixes: `hotfix/<short-description>`
 
-CSV or table view of recipients and vesting data
+Please make sure to update or add tests as appropriate.
 
-Access: 🟢 Public
+## Author(s)
+Made with ❤️ by 2LYP Computations PVT Ltd
 
-3. 🚰 Faucet Page (User Interaction)
-Button to faucetMint() if cooldown passed
+## License
 
-Shows:
-
-Faucet drip amount
-
-Cooldown remaining
-
-Transaction status
-
-Access: 🟢 All wallet users
-Function used: faucetMint()
-
-4. 🎁 Airdrop Claim Page
-If user is in airdropList, shows:
-
-“You’re eligible for ___ tokens”
-
-Claim button using claimAirdrop()
-
-Status: Claimed / Not Claimed
-
-Access: 🟢 Users eligible for airdrop
-Function used: claimAirdrop()
-
-5. ⏳ Vesting Dashboard (User-Specific)
-For any vested user (team, advisor, investor):
-
-View: total allocated, released, unreleased
-
-Click: releaseVestedTokens()
-
-Also show vesting timeline bar (using getVestedAmount())
-
-Access: 🟢 Vesting users
-Functions used: releaseVestedTokens(), getVestedAmount()
-
-6. 🛠 Admin Panel (Restricted)
-For contract owner only (either EOA or Gnosis Safe multisig).
-Suggested features:
-
-➤ 📈 Tokenomics Controls
-Call initTokenomics() (once)
-
-View status (whether initialized)
-
-➤ ✳️ Airdrop Manager
-Upload wallet list + token amount CSV
-
-Call setAirdropList(address[], uint256[])
-
-➤ 🧪 Faucet Controls
-Adjust drip amount or cooldown via updateFaucetSettings()
-
-➤ 📤 Vesting Manager
-Add custom vesting via addVesting(address, amount, cliff, duration)
-
-Show existing vesting entries
-
-➤ 🔐 Rescue Feature
-Call rescueERC20(token, amount, to) (for mis-sent tokens)
-
-➤ 🔒 Admin Identity Check
-Disable functions if not connected as owner()
-
-Access: 🔴 Only contract owner
+This project is licensed under [MIT](https://choosealicense.com/licenses/mit/). Please refer the license file for more details.

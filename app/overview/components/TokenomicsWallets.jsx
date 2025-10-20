@@ -95,7 +95,7 @@ export default function TokenomicsWallets() {
     <Card className="w-full">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          🏦 Tokenomics Wallets
+          Tokenomics Wallets
           <Badge variant="secondary">Live</Badge>
         </CardTitle>
       </CardHeader>

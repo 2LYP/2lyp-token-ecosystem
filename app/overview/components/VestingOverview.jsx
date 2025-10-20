@@ -116,7 +116,7 @@ export default function VestingOverview() {
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2">
-            ⏳ Vesting Overview
+            Vesting Overview
             <Badge variant="secondary">Real-time</Badge>
           </CardTitle>
           <div className="flex items-center gap-4 text-sm">

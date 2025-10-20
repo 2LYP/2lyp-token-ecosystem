@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useAccount, useConnect, useDisconnect } from "wagmi";
 import { injected } from "wagmi/connectors";
 import { Button } from "@/components/ui/button";
@@ -22,8 +23,9 @@ export default function Navbar() {
     <nav className="sticky top-0 z-50 w-full bg-background/80 backdrop-blur-md border-b border-border shadow-sm">
       <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
         {/* Logo / Title */}
-        <Link href="/" className="text-xl font-bold tracking-tight">
-          2LYP Token
+        <Link href="/" className="text-xl flex gap-5 items-center font-bold tracking-tight">
+          <Image src="/2lyp-icon.png" alt="2LYP Logo" width={40} height={40} />
+          <p>2LYP Hub</p>
         </Link>
 
         {/* Navigation Links */}

@@ -108,7 +108,7 @@ export default function LiveStatsBox() {
   return (
     <Card className="w-full">
       <CardHeader>
-        <CardTitle className="text-xl">📊 Live Token Stats</CardTitle>
+        <CardTitle className="text-xl">Live Token Stats</CardTitle>
       </CardHeader>
       <Separator />
       <CardContent className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 py-4 text-sm">
