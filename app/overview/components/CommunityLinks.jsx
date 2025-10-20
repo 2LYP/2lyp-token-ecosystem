@@ -17,7 +17,7 @@ const links = [
     href: "https://2lyp.xyz",
   },
   {
-    name: "Twitter",
+    name: "Twitter(soon!)",
     icon: <FaTwitter className="w-5 h-5 text-blue-500" />,
     href: "https://twitter.com/2lyp",
   },
@@ -29,15 +29,15 @@ const links = [
   {
     name: "Docs",
     icon: <BookOpen className="w-5 h-5 text-emerald-600" />,
-    href: "https://docs.2lyp.xyz",
+    href: "https://github.com/2LYP/2lyp-token-ecosystem/blob/main/2LYP_Tokenomics%20(1).pdf",
   },
   {
-    name: "Discord",
+    name: "Discord(soon!)",
     icon: <FaDiscord className="w-5 h-5 text-indigo-500" />,
     href: "https://discord.gg/2lyp",
   },
   {
-    name: "Telegram",
+    name: "Telegram(soon!)",
     icon: <FaTelegramPlane className="w-5 h-5 text-sky-400" />,
     href: "https://t.me/lyptoken",
   },

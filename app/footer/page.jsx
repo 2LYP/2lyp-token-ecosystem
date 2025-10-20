@@ -17,7 +17,7 @@ export default function Footer() {
       href: "https://2lyp.net",
     },
     {
-      name: "Twitter",
+      name: "Twitter(soon!)",
       icon: <FaTwitter className="w-4 h-4 text-blue-500" />,
       href: "https://twitter.com/2lyp",
     },
@@ -32,12 +32,12 @@ export default function Footer() {
       href: "https://github.com/2LYP/2LYP-Tokenomics",
     },
     {
-      name: "Discord",
+      name: "Discord(soon!)",
       icon: <FaDiscord className="w-4 h-4 text-indigo-500" />,
       href: "https://discord.gg/2lyp",
     },
     {
-      name: "Telegram",
+      name: "Telegram(soon!)",
       icon: <FaTelegramPlane className="w-4 h-4 text-sky-400" />,
       href: "https://t.me/lyptoken",
     },
@@ -47,7 +47,7 @@ export default function Footer() {
     { name: "Overview", href: "/" },
     { name: "Faucet", href: "/faucet" },
     { name: "Airdrop", href: "/airdrop" },
-    { name: "Tokenomics", href: "/vesting" },
+    { name: "Tokenomics", href: "https://github.com/2LYP/2lyp-token-ecosystem/blob/main/2LYP_Tokenomics%20(1).pdf" },
     { name: "Admin", href: "/admin" },
   ];
 
@@ -75,7 +75,7 @@ export default function Footer() {
             <ul className="space-y-1">
               {navLinks.map((link) => (
                 <li key={link.name}>
-                  <Link href={link.href} className="text-sm hover:underline">
+                  <Link target="_blank" href={link.href} className="text-sm hover:underline">
                     {link.name}
                   </Link>
                 </li>
