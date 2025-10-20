@@ -1,90 +1,56 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
 import {
   Send,
-  Flame,
+  Coins,
   Droplet,
   Gift,
   Clock,
   Settings2,
   ExternalLink,
+  UserPlus,
+  Wallet,
 } from "lucide-react";
-
-const mockEvents = [
-  {
-    type: "Transfer",
-    from: "0x123...abcd",
-    to: "0x456...def0",
-    amount: "5000000000000000000",
-    timestamp: 1719051000000,
-    txHash: "0xaaa111...",
-  },
-  {
-    type: "Burn",
-    from: "0x456...def0",
-    amount: "1000000000000000000",
-    timestamp: 1719040000000,
-    txHash: "0xbbb222...",
-  },
-  {
-    type: "FaucetClaimed",
-    to: "0x789...cafe",
-    amount: "2000000000000000000",
-    timestamp: 1719030000000,
-    txHash: "0xccc333...",
-  },
-  {
-    type: "AirdropClaimed",
-    to: "0xabc...1234",
-    amount: "10000000000000000000",
-    timestamp: 1719020000000,
-    txHash: "0xddd444...",
-  },
-  {
-    type: "VestingReleased",
-    beneficiary: "0xdef...5678",
-    amount: "3000000000000000000",
-    timestamp: 1719010000000,
-    txHash: "0xeee555...",
-  },
-  {
-    type: "TokenomicsInitialized",
-    timestamp: 1719000000000,
-    txHash: "0xfff666...",
-  },
-];
-
-const eventTypes = [
-  "All",
-  "Transfer",
-  "Burn",
-  "FaucetClaimed",
-  "AirdropClaimed",
-  "VestingReleased",
-  "TokenomicsInitialized",
-];
+import { useFormattedEvents } from "@/hooks/read/useContractEvents";
+import { formatDate } from "@/lib/dateUtils";
 
 export default function ActivityFeed() {
   const [filter, setFilter] = useState("All");
+  const [isClient, setIsClient] = useState(false);
+  const realEvents = useFormattedEvents();
+
+  // Avoid hydration mismatch by only rendering dynamic content on client
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const filteredEvents =
     filter === "All"
-      ? mockEvents
-      : mockEvents.filter((e) => e.type === filter);
+      ? realEvents
+      : realEvents.filter((e) => e.type === filter);
+
+  const formatTimestamp = (timestamp) => {
+    if (!isClient) return 'Loading...'; // Avoid SSR mismatch
+    return formatDate(timestamp);
+  };
 
   return (
     <Card className="w-full rounded-2xl shadow-md">
       <CardHeader>
-        <CardTitle>Activity Feed</CardTitle>
+        <CardTitle className="flex items-center gap-2">
+          Activity Feed
+          <Badge variant="secondary">Live</Badge>
+        </CardTitle>
       </CardHeader>
 
       <CardContent>
         <Tabs value={filter} onValueChange={setFilter} className="mb-4">
           <TabsList className="flex flex-wrap justify-start gap-2 overflow-x-auto">
-            {eventTypes.map((type) => (
+            {["All", "Transfer", "TokensMinted", "FaucetClaimed", "AirdropClaimed", "TokensReleased", "VestingAdded", "TokenomicsWalletsSet"].map((type) => (
               <TabsTrigger key={type} value={type}>
                 {type === "All" ? "All Events" : type}
               </TabsTrigger>
@@ -101,11 +67,12 @@ export default function ActivityFeed() {
                 <li key={idx} className="flex gap-3 items-start border-b pb-2">
                   <span className="pt-1">
                     {event.type === "Transfer" && <Send className="text-blue-500 w-5 h-5" />}
-                    {event.type === "Burn" && <Flame className="text-red-500 w-5 h-5" />}
+                    {event.type === "TokensMinted" && <Coins className="text-green-600 w-5 h-5" />}
                     {event.type === "FaucetClaimed" && <Droplet className="text-green-500 w-5 h-5" />}
                     {event.type === "AirdropClaimed" && <Gift className="text-pink-500 w-5 h-5" />}
-                    {event.type === "VestingReleased" && <Clock className="text-yellow-500 w-5 h-5" />}
-                    {event.type === "TokenomicsInitialized" && <Settings2 className="text-purple-500 w-5 h-5" />}
+                    {event.type === "TokensReleased" && <Clock className="text-yellow-500 w-5 h-5" />}
+                    {event.type === "VestingAdded" && <UserPlus className="text-purple-500 w-5 h-5" />}
+                    {event.type === "TokenomicsWalletsSet" && <Wallet className="text-indigo-500 w-5 h-5" />}
                   </span>
 
                   <div className="text-sm leading-snug">
@@ -114,14 +81,14 @@ export default function ActivityFeed() {
                         <strong>Transfer:</strong> {Number(event.amount) / 1e18} 2LYP from <code>{event.from}</code> to <code>{event.to}</code>
                       </>
                     )}
-                    {event.type === "Burn" && (
+                    {event.type === "TokensMinted" && (
                       <>
-                        <strong>Burn:</strong> {Number(event.amount) / 1e18} 2LYP by <code>{event.from}</code>
+                        <strong>Tokens Minted:</strong> {Number(event.amount) / 1e18} 2LYP to <code>{event.to}</code>
                       </>
                     )}
                     {event.type === "FaucetClaimed" && (
                       <>
-                        <strong>Faucet Claim:</strong> {Number(event.amount) / 1e18} 2LYP to <code>{event.to}</code>
+                        <strong>Faucet Claim:</strong> {Number(event.amount) / 1e18} 2LYP claimed by <code>{event.to}</code>
                       </>
                     )}
                     {event.type === "AirdropClaimed" && (
@@ -129,18 +96,23 @@ export default function ActivityFeed() {
                         <strong>Airdrop:</strong> {Number(event.amount) / 1e18} 2LYP claimed by <code>{event.to}</code>
                       </>
                     )}
-                    {event.type === "VestingReleased" && (
+                    {event.type === "TokensReleased" && (
                       <>
-                        <strong>Vesting:</strong> {Number(event.amount) / 1e18} 2LYP released to <code>{event.beneficiary}</code>
+                        <strong>Vesting Release:</strong> {Number(event.amount) / 1e18} 2LYP released to <code>{event.beneficiary}</code>
                       </>
                     )}
-                    {event.type === "TokenomicsInitialized" && (
+                    {event.type === "VestingAdded" && (
                       <>
-                        <strong>Tokenomics Initialized</strong> – setup complete
+                        <strong>New Vesting:</strong> {Number(event.amount) / 1e18} 2LYP schedule created for <code>{event.beneficiary}</code>
+                      </>
+                    )}
+                    {event.type === "TokenomicsWalletsSet" && (
+                      <>
+                        <strong>Tokenomics Setup:</strong> Wallet addresses configured for token distribution
                       </>
                     )}
                     <div className="text-xs text-muted-foreground mt-1 flex items-center gap-2">
-                      {new Date(event.timestamp).toLocaleString()}
+                      {formatTimestamp(event.timestamp)}
                       {event.txHash && (
                         <a
                           href={`https://amoy.polygonscan.com/tx/${event.txHash}`}

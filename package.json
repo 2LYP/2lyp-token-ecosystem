@@ -1,6 +1,6 @@
 {
-  "name": "2lyp-frontend",
-  "version": "0.1.0",
+  "name": "2LYP-Token-Ecosystem",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",

@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Loader2 } from "lucide-react";
 import Navbar from "../navbar/page";
-import Footer from "../footer/page";
 
 export default function AirdropPage() {
   const { address, isConnected } = useAccount();
@@ -35,7 +34,7 @@ export default function AirdropPage() {
     <Navbar />
     <div className="max-w-3xl mx-auto py-10 px-4 space-y-8">
       <div className="space-y-1 text-center">
-        <h1 className="text-3xl font-bold tracking-tight">🎁 Airdrop Claim</h1>
+        <h1 className="text-3xl font-bold tracking-tight">Airdrop Claim</h1>
         <p className="text-muted-foreground text-sm">
           Check your eligibility and claim your airdropped 2LYP tokens.
         </p>
@@ -65,7 +64,7 @@ export default function AirdropPage() {
             <span className="text-muted-foreground text-sm">Eligibility:</span>
             {isEligible ? (
               <Badge variant="outline" className="text-green-600 border-green-600">
-                ✅ Eligible
+                Eligible
               </Badge>
             ) : (
               <Badge variant="destructive">Not Eligible</Badge>
@@ -89,7 +88,7 @@ export default function AirdropPage() {
                     Claiming Airdrop...
                   </>
                 ) : status === "claimed" ? (
-                  "Already Claimed ✅"
+                  "Already Claimed"
                 ) : (
                   "Claim Airdrop"
                 )}
@@ -97,7 +96,7 @@ export default function AirdropPage() {
 
               {status === "claimed" && (
                 <p className="mt-3 text-green-600 text-sm font-medium text-center">
-                  ✅ Airdrop claimed successfully!
+                  Airdrop claimed successfully!
                 </p>
               )}
             </div>
@@ -105,7 +104,6 @@ export default function AirdropPage() {
         </CardContent>
       </Card>
     </div>
-    <Footer />
     </>
   );
 }

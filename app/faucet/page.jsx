@@ -15,8 +15,7 @@ import { useAccount, useReadContract, useWriteContract } from "wagmi";
 import { CONTRACT_ABI, CONTRACT_ADDRESS } from "@/lib/constants";
 
 import Navbar from "../navbar/page";
-import Footer from "../footer/page";
-import { formatEther } from "viem"; // already imported
+import { formatEther } from "viem";
 
 export default function FaucetPage() {
   const { writeContractAsync } = useWriteContract();
@@ -83,7 +82,7 @@ export default function FaucetPage() {
       setStatus("success");
       console.log("faucet tx:" + tx);
     } catch (err) {
-      console.error("❌ Faucet Claim Error:", err);
+      console.error("Faucet Claim Error:", err);
       setStatus("error");
     }
   };
@@ -93,7 +92,7 @@ export default function FaucetPage() {
       <Navbar />
       <div className="max-w-3xl mx-auto py-10 px-4 space-y-8">
         <div className="space-y-1 text-center">
-          <h1 className="text-3xl font-bold tracking-tight">🚰 2LYP Faucet</h1>
+          <h1 className="text-3xl font-bold tracking-tight">2LYP Faucet</h1>
           <p className="text-muted-foreground text-sm">
             Test the 2LYP token with free testnet tokens. All wallets are eligible every 5 minutes.
           </p>
@@ -116,11 +115,11 @@ export default function FaucetPage() {
               <span className="text-muted-foreground text-sm">Cooldown</span>
               {cooldown > 0 ? (
                 <Badge variant="secondary" className="w-fit text-sm">
-                  ⏳ {formatCooldown(cooldown)} remaining
+                  {formatCooldown(cooldown)} remaining
                 </Badge>
               ) : (
                 <Badge variant="outline" className="w-fit text-green-600 border-green-600 text-sm">
-                  ✅ Ready to claim
+                  Ready to claim
                 </Badge>
               )}
             </div>
@@ -159,18 +158,17 @@ export default function FaucetPage() {
 
           {status === "success" && (
             <p className="mt-3 text-green-600 text-sm font-medium">
-              ✅ Faucet claimed successfully! Tokens will appear shortly.
+              Faucet claimed successfully! Tokens will appear shortly.
             </p>
           )}
 
           {status === "error" && (
             <p className="mt-3 text-red-600 text-sm font-medium">
-              ❌ Error while claiming. Please check the console.
+              Error while claiming. Please check the console.
             </p>
           )}
         </div>
       </div>
-      <Footer />
     </>
   );
 }

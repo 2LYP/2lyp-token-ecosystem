@@ -13,7 +13,6 @@ import {
   AlertTriangle,
   ShieldCheck,
 } from "lucide-react";
-import Footer from "../footer/page";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 
 const OWNER_ADDRESS = "0xYourAdminAddress"; // Replace with actual owner
@@ -80,7 +79,6 @@ export default function AdminHomePage() {
         />
       </div>
     </div>
-    <Footer />
     </>
   );
 }

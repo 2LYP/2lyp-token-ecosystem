@@ -15,7 +15,6 @@ import { Badge } from "@/components/ui/badge";
 import { Loader2 } from "lucide-react";
 import VestingPieChart from "./components/VestingPieChart";
 import Navbar from "../navbar/page";
-import Footer from "../footer/page";
 
 export default function VestingDashboard() {
   const { address, isConnected } = useAccount();
@@ -203,7 +202,6 @@ export default function VestingDashboard() {
         </CardContent>
       </Card>
     </div>
-    <Footer />
     </>
   );
 }

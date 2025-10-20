@@ -5,12 +5,14 @@ import { useAccount, useConnect, useDisconnect } from "wagmi";
 import { injected } from "wagmi/connectors";
 import { Button } from "@/components/ui/button";
 import { usePathname } from "next/navigation";
+import { useIsAdmin } from "@/hooks/useIsAdmin";
 
 export default function Navbar() {
   const { address, isConnected } = useAccount();
   const { connect } = useConnect();
   const { disconnect } = useDisconnect();
   const pathname = usePathname();
+  const { isAdmin, isLoading: isAdminLoading } = useIsAdmin();
 
   const shortAddress = address
     ? `${address.slice(0, 6)}...${address.slice(-4)}`
@@ -52,18 +54,21 @@ export default function Navbar() {
           >
             Airdrop
           </Link>
-          <a
+          {/* <a
             href="/vesting"
             className="hover:text-primary text-muted-foreground transition"
           >
             Vesting
-          </a>
-          <a
-            href="/admin"
-            className="hover:text-primary text-muted-foreground transition"
-          >
-            Admin Panel
-          </a>
+          </a> */}
+          {/** Admin link: only visible when connected wallet is contract owner */}
+          {isConnected && !isAdminLoading && isAdmin && (
+            <Link
+              href="/admin"
+              className="hover:text-primary text-muted-foreground transition"
+            >
+              Admin Panel
+            </Link>
+          )}
           
           
         </div>

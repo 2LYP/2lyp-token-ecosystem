@@ -1,6 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import WagmiProviderWrapper from "@/app/providers/WagmiProviderWrapper";
+import Footer from "./footer/page";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,7 +25,9 @@ export default function RootLayout({ children }) {
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <WagmiProviderWrapper>{children}</WagmiProviderWrapper>
+        <Footer />
       </body>
+      
     </html>
   );
 }
