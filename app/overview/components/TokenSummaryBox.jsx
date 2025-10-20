@@ -13,7 +13,9 @@ import {
   useTokenName,
   useTokenSymbol,
   useTokenDecimals,
+  useUserBalance,
 } from "@/hooks/read/useOverviewStats";
+import { useAccount } from 'wagmi';
 
 export default function TokenSummaryBox() {
   const { data: totalSupply } = useTotalSupply();
@@ -28,6 +30,14 @@ export default function TokenSummaryBox() {
   const maxSupplyFormatted = maxSupply ? parseFloat(formatEther(maxSupply)).toLocaleString() : 'Loading...';
   const faucetDripFormatted = faucetDrip ? parseFloat(formatEther(faucetDrip)).toLocaleString() : 'Loading...';
 
+  const { address, isConnected } = useAccount();
+  const { data: userBalance } = useUserBalance(isConnected ? address : undefined);
+  const userBalanceFormatted = !isConnected
+    ? 'Connect wallet'
+    : userBalance
+    ? `${parseFloat(formatEther(userBalance)).toLocaleString()} 2LYP`
+    : 'Loading...';
+
   return (
     <Card className="w-full">
       <CardHeader>
@@ -38,6 +48,10 @@ export default function TokenSummaryBox() {
         <div>
           <p className="text-muted-foreground">Token Name</p>
           <p className="font-semibold">{tokenName || '2LYP Token'}</p>
+        </div>
+        <div>
+          <p className="text-muted-foreground">Your Balance</p>
+          <p className="font-semibold">{userBalanceFormatted}</p>
         </div>
         <div>
           <p className="text-muted-foreground">Symbol</p>

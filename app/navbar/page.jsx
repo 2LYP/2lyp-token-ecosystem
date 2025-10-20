@@ -7,6 +7,8 @@ import { injected } from "wagmi/connectors";
 import { Button } from "@/components/ui/button";
 import { usePathname } from "next/navigation";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
+import { useUserBalance } from '@/hooks/read/useOverviewStats';
+import { formatEther } from 'viem';
 
 export default function Navbar() {
   const { address, isConnected } = useAccount();
@@ -18,6 +20,10 @@ export default function Navbar() {
   const shortAddress = address
     ? `${address.slice(0, 6)}...${address.slice(-4)}`
     : "";
+
+  // Read user's 2LYP balance (pass undefined when not connected)
+  const { data: navbarBalance } = useUserBalance(isConnected ? address : undefined);
+  const navbarBalanceStr = !isConnected ? null : navbarBalance ? `${parseFloat(formatEther(navbarBalance)).toLocaleString()} 2LYP` : 'Loading...';
 
   return (
     <nav className="sticky top-0 z-50 w-full bg-background/80 backdrop-blur-md border-b border-border shadow-sm">
@@ -75,16 +81,23 @@ export default function Navbar() {
           
         </div>
 
-        {/* Wallet Connect Button */}
-        {isConnected ? (
-          <Button variant="outline" size="sm" onClick={() => disconnect()}>
-            {shortAddress}
-          </Button>
-        ) : (
-          <Button variant="default" size="sm" onClick={() => connect({ connector: injected() })}>
-            Connect Wallet
-          </Button>
-        )}
+        {/* Wallet Connect Button + Balance */}
+        <div className="flex items-center gap-3">
+          {navbarBalanceStr && (
+            <div className="hidden sm:block text-sm text-muted-foreground">
+              <div className="font-medium">{navbarBalanceStr}</div>
+            </div>
+          )}
+          {isConnected ? (
+            <Button variant="outline" size="sm" onClick={() => disconnect()}>
+              {shortAddress}
+            </Button>
+          ) : (
+            <Button variant="default" size="sm" onClick={() => connect({ connector: injected() })}>
+              Connect Wallet
+            </Button>
+          )}
+        </div>
       </div>
     </nav>
   );

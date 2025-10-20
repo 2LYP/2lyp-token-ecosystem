@@ -26,3 +26,13 @@ The format is based on Keep a Changelog and adheres to Semantic Versioning.
 ---
 
 For past unreleased notes, see the repository history (git log) or the releases/tags on the remote.
+
+## [1.1.0] - 2025-10-21
+### Added
+- Display connected user's 2LYP token balance in the navbar and dashboard widgets (TokenSummaryBox, LiveStatsBox).
+
+### Changed
+- UI: balance now shows near the Connect Wallet button for quick visibility.
+
+### Notes
+- Minor release focused on UX: exposes on-chain `balanceOf` for the connected wallet and formats values for readability.

@@ -15,6 +15,8 @@ import {
   usePausedStatus,
   useVestingAddresses
 } from "@/hooks/read/useOverviewStats";
+import { useAccount } from 'wagmi';
+import { useUserBalance } from '@/hooks/read/useOverviewStats';
 
 export default function LiveStatsBox() {
   const { data: totalSupply } = useTotalSupply();
@@ -102,6 +104,17 @@ export default function LiveStatsBox() {
       badge: isPaused ? 'Paused' : 'Live'
     }
   ];
+
+  // Connected wallet balance
+  const { address, isConnected } = useAccount();
+  const { data: userBalance } = useUserBalance(isConnected ? address : undefined);
+  const userBalanceFormatted = !isConnected
+    ? 'Connect wallet'
+    : userBalance
+    ? `${parseFloat(formatEther(userBalance)).toLocaleString()} 2LYP`
+    : 'Loading...';
+
+  stats.unshift({ label: 'Your Balance', value: userBalanceFormatted });
 
 
 
