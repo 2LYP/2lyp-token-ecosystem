@@ -83,7 +83,12 @@ export default function OverviewPage() {
           </Button>
           <Button asChild variant="secondary" size="lg">
             <Link href="https://amoy.polygonscan.com/token/0x699D113717e562F35BC5949693a7c79745Aa60b2" target="_blank">
-              Contract Explorer
+              Token Explorer
+            </Link>
+          </Button>
+          <Button asChild variant="secondary" size="lg">
+            <Link href="https://faucet.polygon.technology/" target="_blank">
+              Amoy Faucet
             </Link>
           </Button>
         </div>
@@ -96,8 +101,8 @@ export default function OverviewPage() {
       
       <TokenomicsWallets />
 
-      <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <VestingOverview />
+      <section className="grid grid-cols-1 lg:grid-cols-1 gap-6">
+        {/* <VestingOverview /> */}
         <ActivityFeed />
       </section>
 

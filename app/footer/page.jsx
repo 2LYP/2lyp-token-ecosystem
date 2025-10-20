@@ -14,7 +14,7 @@ export default function Footer() {
     {
       name: "Website",
       icon: <Globe className="w-4 h-4" />,
-      href: "https://2lyp.xyz",
+      href: "https://2lyp.net",
     },
     {
       name: "Twitter",
@@ -29,7 +29,7 @@ export default function Footer() {
     {
       name: "Docs",
       icon: <BookOpen className="w-4 h-4 text-emerald-600" />,
-      href: "https://docs.2lyp.xyz",
+      href: "https://github.com/2LYP/2LYP-Tokenomics",
     },
     {
       name: "Discord",
@@ -47,7 +47,7 @@ export default function Footer() {
     { name: "Overview", href: "/" },
     { name: "Faucet", href: "/faucet" },
     { name: "Airdrop", href: "/airdrop" },
-    { name: "Vesting", href: "/vesting" },
+    { name: "Tokenomics", href: "/vesting" },
     { name: "Admin", href: "/admin" },
   ];
 

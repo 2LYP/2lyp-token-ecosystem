@@ -21,7 +21,7 @@ export default function SecurityAuditSection() {
         <div className="grid sm:grid-cols-2 gap-4">
           <div>
             <p className="text-muted-foreground">Contract Address</p>
-            <p className="font-mono text-xs truncate">0x5FbDB2315678afecb367f032d93F642f64180aa3</p>
+            <p className="font-mono text-xs truncate">0x699D113717e562F35BC5949693a7c79745Aa60b2</p>
           </div>
           <div>
             <p className="text-muted-foreground">Compiler Version</p>
@@ -32,7 +32,7 @@ export default function SecurityAuditSection() {
         <div className="grid sm:grid-cols-2 gap-4">
           <div>
             <p className="text-muted-foreground">Audit Status</p>
-            <Badge variant="secondary" className="bg-yellow-100 text-yellow-700">🕵️ Scheduled - Aug 2025</Badge>
+            <Badge variant="secondary" className="bg-yellow-100 text-yellow-700">🕵️ Scheduled - Nov 2025</Badge>
           </div>
           <div>
             <p className="text-muted-foreground">Contract Verification</p>
@@ -52,7 +52,7 @@ export default function SecurityAuditSection() {
 
         <div>
           <p className="text-muted-foreground">Bug Bounty</p>
-          <Badge variant="outline" className="bg-blue-100 text-blue-700">Coming Q3 2025(tentative)</Badge>
+          <Badge variant="outline" className="bg-blue-100 text-blue-700">Coming Q1 2026(tentative)</Badge>
         </div>
 
         <div className="flex items-center justify-between pt-4">

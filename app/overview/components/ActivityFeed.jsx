@@ -49,7 +49,7 @@ export default function ActivityFeed() {
 
       <CardContent>
         <Tabs value={filter} onValueChange={setFilter} className="mb-4">
-          <TabsList className="flex flex-wrap justify-start gap-2 overflow-x-auto">
+          <TabsList className="flex w-full flex-wrap justify-start gap-2 overflow-x-auto">
             {["All", "Transfer", "TokensMinted", "FaucetClaimed", "AirdropClaimed", "TokensReleased", "VestingAdded", "TokenomicsWalletsSet"].map((type) => (
               <TabsTrigger key={type} value={type}>
                 {type === "All" ? "All Events" : type}

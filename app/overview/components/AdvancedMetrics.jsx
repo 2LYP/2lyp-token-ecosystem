@@ -119,10 +119,10 @@ export default function AdvancedMetrics() {
       </CardHeader>
       <CardContent>
         <Tabs defaultValue="metrics" className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="metrics">Metrics</TabsTrigger>
-            <TabsTrigger value="growth">Growth</TabsTrigger>
-            <TabsTrigger value="distribution">Distribution</TabsTrigger>
+            {/* <TabsTrigger value="growth">Growth</TabsTrigger> */}
+            {/* <TabsTrigger value="distribution">Distribution</TabsTrigger> */}
             <TabsTrigger value="health">Health</TabsTrigger>
           </TabsList>
           
