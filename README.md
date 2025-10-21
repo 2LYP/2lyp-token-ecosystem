@@ -54,4 +54,4 @@ Made with ❤️ by 2LYP Computations PVT Ltd
 
 ## License
 
-This project is licensed under [MIT](https://choosealicense.com/licenses/mit/). Please refer the license file for more details.
+This project is licensed under [GPL-3.0](https://choosealicense.com/licenses/gpl-3.0/). Please refer the license file for more details.
