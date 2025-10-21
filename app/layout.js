@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "2LYP Hub",
+  title: "2LYP Token Hub",
   description: "Dashboard and token utilities for 2LYP",
 };
 
