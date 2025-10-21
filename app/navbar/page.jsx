@@ -23,7 +23,11 @@ export default function Navbar() {
 
   // Read user's 2LYP balance (pass undefined when not connected)
   const { data: navbarBalance } = useUserBalance(isConnected ? address : undefined);
-  const navbarBalanceStr = !isConnected ? null : navbarBalance ? `${parseFloat(formatEther(navbarBalance)).toLocaleString()} 2LYP` : 'Loading...';
+  const navbarBalanceStr = !isConnected
+    ? null
+    : navbarBalance
+      ? `${parseFloat(formatEther(navbarBalance)).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 18 })} 2LYP`
+      : 'Loading...';
 
   return (
     <nav className="sticky top-0 z-50 w-full bg-background/80 backdrop-blur-md border-b border-border shadow-sm">
