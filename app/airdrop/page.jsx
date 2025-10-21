@@ -2,6 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
+import { useAirdropInfo } from '@/hooks/read/useOverviewStats';
+import { useWriteContract } from 'wagmi';
+import { CONTRACT_ABI, CONTRACT_ADDRESS } from '@/lib/constants';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -10,23 +13,39 @@ import Navbar from "../navbar/page";
 
 export default function AirdropPage() {
   const { address, isConnected } = useAccount();
-
-  // Mock eligibility (replace with real contract read later)
-  const mockAirdropList = {
-    "0x123...": 100,
-    "0xabc...": 250,
-  };
-
-  const isEligible = isConnected && mockAirdropList["0x123..."]; // Replace with dynamic key check
+  // @dev Dynamic eligibility and amount
+  const { data: airdropInfo, isLoading: isAirdropLoading, error: airdropError } = useAirdropInfo(isConnected ? address : undefined);
+  
+  // @dev airdropInfo: { amount: BigInt, claimed: boolean } or undefined/null
+  const isEligible = isConnected && airdropInfo && airdropInfo[0] && airdropInfo[0] > 0n;
+  const alreadyClaimed = airdropInfo && airdropInfo[1];
   const [status, setStatus] = useState("not_claimed"); // not_claimed | pending | claimed
+  const [amountToClaim, setAmountToClaim] = useState(0n);
+  useEffect(() => {
+    if (!isAirdropLoading) {
+      setAmountToClaim(airdropInfo[0]);
+    }
+  }, [isAirdropLoading, airdropInfo]);
 
-  const handleClaim = () => {
-    if (!isEligible || status === "claimed") return;
+  // Contract write for claimAirDrop
+  const { writeContract } = useWriteContract();
+  const [txError, setTxError] = useState(null);
+  const handleClaim = async () => {
+    if (!isEligible || alreadyClaimed || status === "claimed") return;
     setStatus("pending");
-
-    setTimeout(() => {
+    setTxError(null);
+    try {
+      await writeContract({
+        address: CONTRACT_ADDRESS,
+        abi: CONTRACT_ABI,
+        functionName: 'claimAirDrop',
+        args: [],
+      });
       setStatus("claimed");
-    }, 2000);
+    } catch (err) {
+      setStatus("not_claimed");
+      setTxError(err?.message || 'Transaction failed');
+    }
   };
 
   return (
@@ -62,7 +81,9 @@ export default function AirdropPage() {
 
           <div className="flex items-center gap-2">
             <span className="text-muted-foreground text-sm">Eligibility:</span>
-            {isEligible ? (
+            {isAirdropLoading ? (
+              <Badge variant="outline">Checking...</Badge>
+            ) : isEligible ? (
               <Badge variant="outline" className="text-green-600 border-green-600">
                 Eligible
               </Badge>
@@ -74,29 +95,36 @@ export default function AirdropPage() {
           {isEligible && (
             <div>
               <p className="text-sm text-muted-foreground mb-2">
-                You're eligible for <strong>{mockAirdropList["0x123..."]} 2LYP</strong>
+                You're eligible for <strong>{amountToClaim ? (Number(amountToClaim)).toLocaleString() : 0} 2LYP</strong>
               </p>
 
               <Button
-                disabled={status === "claimed" || status === "pending"}
+                disabled={alreadyClaimed || status === "claimed" || status === "pending"}
                 onClick={handleClaim}
                 className="w-full"
               >
-                {status === "pending" ? (
+                {alreadyClaimed ? (
+                  "Already Claimed"
+                ) : status === "pending" ? (
                   <>
                     <Loader2 className="animate-spin w-4 h-4 mr-2" />
                     Claiming Airdrop...
                   </>
                 ) : status === "claimed" ? (
-                  "Already Claimed"
+                  "Airdrop Claimed"
                 ) : (
                   "Claim Airdrop"
                 )}
               </Button>
 
-              {status === "claimed" && (
+              {(alreadyClaimed || status === "claimed") && (
                 <p className="mt-3 text-green-600 text-sm font-medium text-center">
                   Airdrop claimed successfully!
+                </p>
+              )}
+              {txError && (
+                <p className="mt-3 text-red-600 text-sm font-medium text-center">
+                  {txError}
                 </p>
               )}
             </div>

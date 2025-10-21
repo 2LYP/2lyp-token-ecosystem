@@ -11,7 +11,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { useState } from "react";
-import Footer from "@/app/footer/page";
+import { useWriteContract } from 'wagmi';
+import { CONTRACT_ABI, CONTRACT_ADDRESS } from '@/lib/constants';
+import { Loader2 } from "lucide-react";
 
 export default function AirdropAdmin() {
   const [entries, setEntries] = useState([{ address: "", amount: "" }]);
@@ -30,16 +32,33 @@ export default function AirdropAdmin() {
     setEntries(entries.filter((_, i) => i !== index));
   };
 
-  const handleSubmit = () => {
+  const [txStatus, setTxStatus] = useState('idle'); // idle | pending | success | error
+  const [txError, setTxError] = useState(null);
+
+  const { writeContract, isPending, isSuccess } = useWriteContract();
+
+  const handleSubmit = async () => {
+    setTxStatus('idle');
+    setTxError(null);
     const validEntries = entries.filter(
       (entry) => entry.address && entry.amount && !isNaN(entry.amount)
     );
-
     const addresses = validEntries.map((e) => e.address);
-    const amounts = validEntries.map((e) => parseInt(e.amount));
-
-    // Call `setAirdropList(addresses, amounts)` here via wagmi
-    alert(`Mock call: setAirdropList(\n${JSON.stringify(addresses)},\n${JSON.stringify(amounts)})`);
+    const amounts = validEntries.map((e) => BigInt(e.amount));
+    if (!addresses.length) return;
+    setTxStatus('pending');
+    try {
+      await writeContract({
+        address: CONTRACT_ADDRESS,
+        abi: CONTRACT_ABI,
+        functionName: 'setAirdropList',
+        args: [addresses, amounts],
+      });
+      setTxStatus('success');
+    } catch (err) {
+      setTxStatus('error');
+      setTxError(err?.message || 'Transaction failed');
+    }
   };
 
   return (
@@ -79,12 +98,24 @@ export default function AirdropAdmin() {
           ))}
         </div>
 
-        <div className="flex justify-between items-center mt-4">
+
+        <div className="flex justify-between items-center mt-4 gap-2">
           <Button variant="outline" onClick={addEntry}>
             ➕ Add Another
           </Button>
-          <Button onClick={handleSubmit}>Set Airdrop List</Button>
+          <Button onClick={handleSubmit} disabled={txStatus === 'pending'}>
+            {txStatus === 'pending' ? (
+              <><Loader2 className="animate-spin w-4 h-4 mr-2 inline" /> Setting...</>
+            ) : 'Set Airdrop List'}
+          </Button>
         </div>
+
+        {txStatus === 'success' && (
+          <div className="text-green-600 text-sm mt-2">Airdrop list set successfully!</div>
+        )}
+        {txStatus === 'error' && (
+          <div className="text-red-600 text-sm mt-2">{txError}</div>
+        )}
 
         <Separator className="my-6" />
 
