@@ -54,7 +54,7 @@ export default function VestingAdmin() {
       setStatus("success");
       setForm({ address: "", amount: "", cliff: "", duration: "" });
     } catch (error) {
-      console.error("❌ Vesting Error:", error);
+      console.error("Vesting Error:", error);
       setStatus("error");
     }
   };
@@ -81,7 +81,7 @@ const { data: vestingData } = useReadContracts({
     functionName: "vestingList",
     args: [address],
   })),
-  enabled: vestingAddresses.length > 0, // 💡 Only run once we have addresses
+  enabled: vestingAddresses.length > 0, // @dev Only run once we have addresses
   allowFailure: true,
 });
 
@@ -150,12 +150,12 @@ const { data: vestingData } = useReadContracts({
 
         {status === "success" && (
           <p className="text-green-600 text-sm font-medium mt-2">
-            ✅ Vesting entry added successfully.
+            Vesting entry added successfully.
           </p>
         )}
         {status === "error" && (
           <p className="text-red-600 text-sm font-medium mt-2">
-            ❌ Failed to add vesting. Please check the console.
+            Failed to add vesting. Please check the console.
           </p>
         )}
 

@@ -40,7 +40,7 @@ export default function RescueAdmin() {
       setAmount("");
       setRecipient("");
     } catch (err) {
-      console.error("❌ Rescue Error:", err);
+      console.error("Rescue Error:", err);
       setStatus("error");
     }
   };
@@ -96,18 +96,18 @@ export default function RescueAdmin() {
           </div>
 
           <Button onClick={handleRescue} disabled={status === "rescuing"}>
-            {status === "rescuing" ? "Rescuing..." : "🚨 Rescue Tokens"}
+            {status === "rescuing" ? "Rescuing..." : "Rescue Tokens"}
           </Button>
 
           {status === "success" && (
             <p className="text-green-600 text-sm font-medium mt-2">
-              ✅ Rescue transaction submitted successfully.
+              Rescue transaction submitted successfully.
             </p>
           )}
 
           {status === "error" && (
             <p className="text-red-600 text-sm font-medium mt-2">
-              ❌ Failed to rescue tokens. See console for details.
+              Failed to rescue tokens. See console for details.
             </p>
           )}
         </div>

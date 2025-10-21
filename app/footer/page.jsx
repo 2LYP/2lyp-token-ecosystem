@@ -48,7 +48,6 @@ export default function Footer() {
     { name: "Faucet", href: "/faucet" },
     { name: "Airdrop", href: "/airdrop" },
     { name: "Tokenomics", href: "https://github.com/2LYP/2lyp-token-ecosystem/blob/main/2LYP_Tokenomics%20(1).pdf" },
-    { name: "Admin", href: "/admin" },
   ];
 
   const legalLinks = [

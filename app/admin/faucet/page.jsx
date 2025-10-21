@@ -121,17 +121,17 @@ export default function FaucetAdmin() {
           >
             {isPending || status === "updating"
               ? "Updating..."
-              : "🔄 Update Faucet Settings"}
+              : "Update Faucet Settings"}
           </Button>
 
           {status === "updated" && (
             <p className="text-green-600 text-sm font-medium mt-2">
-              ✅ Faucet settings updated successfully.
+              Faucet settings updated successfully.
             </p>
           )}
           {status === "error" && (
             <p className="text-red-600 text-sm font-medium mt-2">
-              ❌ Failed to update faucet settings.
+              Failed to update faucet settings.
             </p>
           )}
         </div>

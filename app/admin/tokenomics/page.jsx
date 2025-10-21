@@ -13,7 +13,7 @@ import { toast } from "sonner";
 import {
   useTokenomicsStatus,
   useInitTokenomics
-} from "@/hooks/admin/useTokenomicsControls"; // your Wagmi hooks
+} from "@/hooks/admin/useTokenomicsControls";
 import { useWriteContract, useReadContract } from "wagmi";
 import { CONTRACT_ABI, CONTRACT_ADDRESS } from "@/lib/constants";
 
@@ -41,7 +41,7 @@ export default function TokenomicsAdmin() {
 
   if (isError && status !== "error") {
     setStatus("error");
-    toast.error(`❌ Failed to initialize: ${error?.message}`);
+    toast.error(`Failed to initialize: ${error?.message}`);
   }
 }, [isPending, isSuccess, isError, status]);
 
@@ -66,7 +66,7 @@ export default function TokenomicsAdmin() {
           refetch();
         },
         onError(error) {
-          toast.error(`❌ Failed to initialize: ${error.message}`);
+          toast.error(`Failed to initialize: ${error.message}`);
         },
       });
     } catch (err) {
@@ -92,7 +92,7 @@ export default function TokenomicsAdmin() {
               isInitialized ? "text-green-600" : "text-orange-500"
             }`}
           >
-            {isInitialized ? "✅ Initialized" : "⚠️ Not Initialized"}
+            {isInitialized ? "Initialized" : "Not Initialized"}
           </p>
         </div>
 
@@ -100,9 +100,9 @@ export default function TokenomicsAdmin() {
         <div className="text-sm text-muted-foreground leading-relaxed">
           This function sets the foundational parameters of the 2LYP token such as:
           <ul className="list-disc list-inside mt-2">
-            <li>🔢 Total, max, and initial supply</li>
-            <li>📊 Allocations for team, treasury, investors, etc.</li>
-            <li>⏳ Vesting structures and cliff definitions</li>
+            <li>Total, max, and initial supply</li>
+            <li>Allocations for team, treasury, investors, etc.</li>
+            <li>Vesting structures and cliff definitions</li>
           </ul>
           It must only be called once after deployment.
         </div>
@@ -115,14 +115,14 @@ export default function TokenomicsAdmin() {
           {isPending
             ? "Initializing..."
             : isInitialized
-            ? "✅ Already Initialized"
-            : "🚀 Initialize Tokenomics"}
+            ? "Already Initialized"
+            : " Initialize Tokenomics"}
         </Button>
 
         {/* Confirmation Message */}
         {status === "success" && (
           <p className="text-green-600 text-sm font-medium mt-2">
-            🎉 Tokenomics successfully initialized.
+            Tokenomics successfully initialized.
           </p>
         )}
       </CardContent>

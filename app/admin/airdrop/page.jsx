@@ -38,7 +38,7 @@ export default function AirdropAdmin() {
     const addresses = validEntries.map((e) => e.address);
     const amounts = validEntries.map((e) => parseInt(e.amount));
 
-    // ✅ Call `setAirdropList(addresses, amounts)` here via wagmi
+    // Call `setAirdropList(addresses, amounts)` here via wagmi
     alert(`Mock call: setAirdropList(\n${JSON.stringify(addresses)},\n${JSON.stringify(amounts)})`);
   };
 
@@ -46,7 +46,7 @@ export default function AirdropAdmin() {
     <>
     <Card className="shadow-md">
       <CardHeader>
-        <CardTitle>✳️ Airdrop Manager</CardTitle>
+        <CardTitle>Airdrop Manager</CardTitle>
         <CardDescription>
           Manually input wallet addresses and token amounts to register an airdrop list.
         </CardDescription>
@@ -83,13 +83,13 @@ export default function AirdropAdmin() {
           <Button variant="outline" onClick={addEntry}>
             ➕ Add Another
           </Button>
-          <Button onClick={handleSubmit}>🚀 Set Airdrop List</Button>
+          <Button onClick={handleSubmit}>Set Airdrop List</Button>
         </div>
 
         <Separator className="my-6" />
 
         <div className="text-sm text-muted-foreground">
-          <p className="font-medium mb-1">📋 Current Input:</p>
+          <p className="font-medium mb-1">Current Input:</p>
           <ul className="list-disc list-inside">
             {entries.map((e, i) => (
               <li key={i}>
