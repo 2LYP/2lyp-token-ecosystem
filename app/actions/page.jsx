@@ -3,7 +3,7 @@
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import Navbar from "../navbar/page";
+import Navbar from "../../components/navbar/page";
 
 export default function TokenActionsPage() {
   const [burnAmount, setBurnAmount] = useState("");

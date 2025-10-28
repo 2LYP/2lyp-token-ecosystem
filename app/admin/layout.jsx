@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation";
 import {
   Settings, Upload, SlidersHorizontal, BadgePlus, AlertTriangle, ShieldCheck,
 } from "lucide-react";
-import Navbar from "../navbar/page";
+import Navbar from "../../components/navbar/page";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { useAccount } from "wagmi";
 

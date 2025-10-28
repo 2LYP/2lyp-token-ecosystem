@@ -14,7 +14,7 @@ import TokenomicsWallets from './components/TokenomicsWallets';
 import VestingOverview from './components/VestingOverview';
 import AdvancedMetrics from './components/AdvancedMetrics';
 import ModernFooter from './components/ModernFooter';
-import Navbar from '../navbar/page';
+import Navbar from '../../components/navbar/page';
 import { useRealTokenomicsData, useRealVestingData } from '@/hooks/read/useRealData';
 
 const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff7f50', '#a6cee3'];

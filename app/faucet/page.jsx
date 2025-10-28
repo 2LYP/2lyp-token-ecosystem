@@ -14,7 +14,7 @@ import { Loader2 } from "lucide-react";
 import { useAccount, useReadContract, useWriteContract } from "wagmi";
 import { CONTRACT_ABI, CONTRACT_ADDRESS } from "@/lib/constants";
 
-import Navbar from "../navbar/page";
+import Navbar from "../../components/navbar/page";
 import { formatEther } from "viem";
 
 export default function FaucetPage() {

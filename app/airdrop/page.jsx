@@ -9,7 +9,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Loader2 } from "lucide-react";
-import Navbar from "../navbar/page";
+import Navbar from "../../components/navbar/page";
 
 export default function AirdropPage() {
   const { address, isConnected } = useAccount();

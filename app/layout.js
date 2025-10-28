@@ -1,7 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import WagmiProviderWrapper from "@/app/providers/WagmiProviderWrapper";
-import Footer from "./footer/page";
+import Footer from "../components/footer/page";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
