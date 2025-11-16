@@ -3,7 +3,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ShieldCheck, FileCheck, ExternalLink, GitBranch } from "lucide-react";
+import { ShieldCheck, FileCheck, ExternalLink, GitBranch, CircleCheckBig } from "lucide-react";
 import Link from "next/link";
 
 export default function SecurityAuditSection() {
@@ -36,17 +36,17 @@ export default function SecurityAuditSection() {
           </div>
           <div>
             <p className="text-muted-foreground">Contract Verification</p>
-            <Badge className="bg-green-100 text-green-800">✅ Verified on Polygonscan</Badge>
+            <Badge className="bg-green-100 text-green-800"><CircleCheckBig size={15} className="text-green-500"/> Verified on Polygonscan</Badge>
           </div>
         </div>
 
         <div>
           <p className="text-muted-foreground">Security Practices</p>
           <ul className="list-disc pl-6 text-muted-foreground space-y-1">
-            <li>✅ Custom Errors for Gas Optimization</li>
-            <li>✅ Role-Restricted Minting (OnlyOwner)</li>
-            <li>✅ SafeERC20 Transfers (Rescue Handling)</li>
-            <li>✅ Revert on Re-initialization & Invalid Vesting</li>
+            <span className="flex items-center gap-2"><CircleCheckBig size={15} className="text-green-500"/> Custom Errors for Gas Optimization</span>
+            <span className="flex items-center gap-2"><CircleCheckBig size={15} className="text-green-500"/> Role-Restricted Minting (OnlyOwner)</span>
+            <span className="flex items-center gap-2"><CircleCheckBig size={15} className="text-green-500"/> SafeERC20 Transfers (Rescue Handling)</span>
+            <span className="flex items-center gap-2"><CircleCheckBig size={15} className="text-green-500"/> Revert on Re-initialization & Invalid Vesting</span>
           </ul>
         </div>
 
