@@ -72,7 +72,7 @@ export default function TokenomicsWallets() {
       icon: Gift,
       label: "Airdrop Wallet",
       address: airdropWallet,
-      description: "Community airdrop distribution",
+      description: "Community airdrop distribution (45%)",
       color: "bg-pink-500"
     },
     {
@@ -86,7 +86,7 @@ export default function TokenomicsWallets() {
       icon: Wallet,
       label: "Client Wallet",
       address: clientWallet,
-      description: "Client and partnership allocation",
+      description: "Client and partnership allocation (10%)",
       color: "bg-orange-500"
     }
   ];
