@@ -68,7 +68,7 @@ export default function FaucetAdmin() {
   return (
     <Card className="shadow-md">
       <CardHeader>
-        <CardTitle>🧪 Faucet Controls</CardTitle>
+        <CardTitle>Faucet Controls</CardTitle>
         <CardDescription>
           View and update the faucet’s drip rate and cooldown settings.
         </CardDescription>
@@ -77,7 +77,7 @@ export default function FaucetAdmin() {
       <CardContent className="space-y-6">
         {/* Current Settings */}
         <div className="border p-4 rounded-md bg-muted/40 text-sm">
-          <p className="mb-1">🧾 <strong>Current Faucet Settings:</strong></p>
+          <p className="mb-1"><strong>Current Faucet Settings:</strong></p>
           <ul className="ml-4 list-disc list-inside">
             <li><strong>Drip Amount:</strong> {currentDrip ?? "Loading..."} 2LYP</li>
             <li><strong>Cooldown:</strong> {currentCooldown?.toString() ?? "Loading..."} seconds</li>

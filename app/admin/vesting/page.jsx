@@ -88,7 +88,7 @@ const { data: vestingData } = useReadContracts({
   return (
     <Card className="shadow-md">
       <CardHeader>
-        <CardTitle>📤 Vesting Manager</CardTitle>
+        <CardTitle>Vesting Manager</CardTitle>
         <CardDescription>
           Allocate tokens to contributors with a defined release schedule.
         </CardDescription>
@@ -145,7 +145,7 @@ const { data: vestingData } = useReadContracts({
           onClick={handleAddVesting}
           disabled={status === "pending"}
         >
-          {status === "pending" ? "Processing..." : "➕ Add Vesting Entry"}
+          {status === "pending" ? "Processing..." : "+ Add Vesting Entry"}
         </Button>
 
         {status === "success" && (
@@ -164,7 +164,7 @@ const { data: vestingData } = useReadContracts({
         {/* Live Entries */}
         <div className="space-y-2">
   <p className="text-sm text-muted-foreground font-medium">
-    📋 Existing Vesting Entries
+    Existing Vesting Entries
   </p>
 
   {vestingAddresses.length === 0 ? (

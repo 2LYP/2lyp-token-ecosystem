@@ -48,7 +48,7 @@ export default function RescueAdmin() {
   return (
     <Card className="shadow-md">
       <CardHeader>
-        <CardTitle>🔐 Rescue Feature</CardTitle>
+        <CardTitle>Rescue Feature</CardTitle>
         <CardDescription>
           Recover any ERC-20 tokens accidentally sent to the contract address.
         </CardDescription>

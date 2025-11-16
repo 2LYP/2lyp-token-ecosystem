@@ -77,7 +77,7 @@ export default function TokenomicsAdmin() {
   return (
     <Card className="shadow-md">
       <CardHeader>
-        <CardTitle>📈 Tokenomics Controls</CardTitle>
+        <CardTitle>Tokenomics Controls</CardTitle>
         <CardDescription>
           Initialize tokenomics settings such as total supply, allocation, and vesting config.
         </CardDescription>

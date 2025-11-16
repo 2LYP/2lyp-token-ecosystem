@@ -101,7 +101,7 @@ export default function AirdropAdmin() {
 
         <div className="flex justify-between items-center mt-4 gap-2">
           <Button variant="outline" onClick={addEntry}>
-            ➕ Add Another
+            + Add Another
           </Button>
           <Button onClick={handleSubmit} disabled={txStatus === 'pending'}>
             {txStatus === 'pending' ? (
