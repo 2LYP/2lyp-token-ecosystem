@@ -1,5 +1,6 @@
 "use client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -12,7 +13,11 @@ import {
   Zap,
   Shield,
   ChartBar,
-  Clock
+  Clock,
+  Lock,
+  AlertTriangle,
+  CheckCircle,
+  Info
 } from "lucide-react";
 import { LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { formatEther } from "viem";
@@ -25,6 +30,12 @@ import {
   useTokenomicsStatus,
   usePausedStatus,
   useVestingAddresses,
+  useOwner,
+  useTeamWallet,
+  useInvestorWallet,
+  useAirdropWallet,
+  useTreasuryWallet,
+  useClientWallet,
 } from "@/hooks/read/useOverviewStats";
 import { useRealTokenomicsData, useRealVestingData } from "@/hooks/read/useRealData";
 import { useRealTimeHealthMetrics, useRealTimeGrowthMetrics, useSupplyVelocity, useRealTimeDistribution } from "@/hooks/read/useRealTimeMetrics";
@@ -59,6 +70,12 @@ export default function AdvancedMetrics() {
   const { data: tokenomicsInitialized } = useTokenomicsStatus();
   const { data: isPaused } = usePausedStatus();
   const { data: vestingAddresses } = useVestingAddresses();
+  const { data: owner } = useOwner();
+  const { data: teamWallet } = useTeamWallet();
+  const { data: investorWallet } = useInvestorWallet();
+  const { data: airdropWallet } = useAirdropWallet();
+  const { data: treasuryWallet } = useTreasuryWallet();
+  const { data: clientWallet } = useClientWallet();
   
   // Get real data
   const { distributedSupply, circulatingSupply } = useRealTokenomicsData();
@@ -71,8 +88,99 @@ export default function AdvancedMetrics() {
   const distributionData = useRealTimeDistribution();
 
   const maximumSupply = maxSupply ? parseFloat(formatEther(maxSupply)) : 10000000;
+  const totalSupplyNum = totalSupply ? parseFloat(formatEther(totalSupply)) : 0;
   const supplyUtilization = (currentSupply / maximumSupply) * 100;
   const remainingSupply = maximumSupply - currentSupply;
+
+  const privilegedComplete = !!(teamWallet && investorWallet && airdropWallet && treasuryWallet && clientWallet);
+  const supplyIntegrity = currentSupply <= maximumSupply;
+  const vestingHealth = totalAllocated >= totalVested && vestingCount >= 0;
+
+  const computeScore = (checks) => {
+    let score = 100;
+    for (const c of checks) score += c;
+    return Math.max(0, Math.min(100, Math.round(score)));
+  };
+
+  // Security score heuristic
+  const securityScore = computeScore([
+    owner ? 0 : -30,
+    privilegedComplete ? 0 : -10,
+    supplyIntegrity ? 0 : -30,
+    tokenomicsInitialized ? 0 : -10,
+    vestingHealth ? 0 : -5,
+    isPaused ? -5 : 0,
+  ]);
+
+  // Governance score heuristic
+  const governanceScore = computeScore([
+    privilegedComplete ? 0 : -15,
+    vestingCount > 0 ? 0 : -15,
+    totalAllocated > 0 ? 0 : -10,
+  ]);
+
+  const scoreColor = (score) => {
+    if (score >= 85) return { text: 'text-green-600', bg: 'bg-green-500', label: 'Good' };
+    if (score >= 65) return { text: 'text-yellow-600', bg: 'bg-yellow-500', label: 'Moderate' };
+    return { text: 'text-red-600', bg: 'bg-red-500', label: 'Risk' };
+  };
+
+  const secColor = scoreColor(securityScore);
+  const govColor = scoreColor(governanceScore);
+
+  const summary = {
+    contract: {
+      owner: owner || null,
+      paused: !!isPaused,
+      tokenomicsInitialized: !!tokenomicsInitialized,
+    },
+    wallets: {
+      team: teamWallet || null,
+      investor: investorWallet || null,
+      airdrop: airdropWallet || null,
+      treasury: treasuryWallet || null,
+      client: clientWallet || null,
+    },
+    supply: {
+      max: maximumSupply,
+      total: totalSupplyNum,
+      current: currentSupply,
+      circulating: circulatingSupply,
+      integrity: supplyIntegrity,
+    },
+    vesting: {
+      count: vestingCount,
+      totalAllocated,
+      totalVested,
+    },
+    faucet: {
+      drip: faucetDrip ? parseFloat(formatEther(faucetDrip)) : 0,
+      cooldownSeconds: faucetCooldown ? Number(faucetCooldown) : 0,
+    },
+    scores: {
+      security: securityScore,
+      governance: governanceScore,
+      distribution: distributionData?.liquidityMetrics?.distributionScore ?? null,
+    },
+    meta: {
+      deploymentNetwork: 'Polygon Amoy (testnet)',
+      timestamp: new Date().toISOString(),
+    },
+  };
+
+  const handleExportJSON = () => {
+    try {
+      const blob = new Blob([JSON.stringify(summary, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `2lyp-metrics-${Date.now()}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      console.error('Export failed', e);
+    }
+  };
   
   const metrics = [
     {
@@ -111,19 +219,20 @@ export default function AdvancedMetrics() {
 
   return (
     <Card className="w-full">
-      <CardHeader>
+      <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle className="flex items-center gap-2">
           Advanced Analytics
           <Badge variant="default">Pro</Badge>
         </CardTitle>
+        <Button variant="outline" size="sm" onClick={handleExportJSON}>Export JSON</Button>
       </CardHeader>
       <CardContent>
         <Tabs defaultValue="metrics" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-3 lg:grid-cols-4">
             <TabsTrigger value="metrics">Metrics</TabsTrigger>
-            {/* <TabsTrigger value="growth">Growth</TabsTrigger> */}
-            {/* <TabsTrigger value="distribution">Distribution</TabsTrigger> */}
             <TabsTrigger value="health">Health</TabsTrigger>
+            <TabsTrigger value="security">Security</TabsTrigger>
+            <TabsTrigger value="trust">Trust</TabsTrigger>
           </TabsList>
           
           <TabsContent value="metrics" className="space-y-4">
@@ -196,6 +305,80 @@ export default function AdvancedMetrics() {
                 </CardContent>
               </Card>
             </div>
+          </TabsContent>
+
+          {/* SECURITY TAB */}
+          <TabsContent value="security" className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm flex items-center gap-2"><Lock className="w-4 h-4 text-blue-600" />Ownership</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2 text-xs">
+                    <div className="flex justify-between"><span>Owner</span><code className="truncate max-w-[140px]">{owner ? `${owner.slice(0,6)}...${owner.slice(-4)}` : '—'}</code></div>
+                    <div className="flex justify-between"><span>Team</span><code className="truncate max-w-[140px]">{teamWallet ? `${teamWallet.slice(0,6)}...${teamWallet.slice(-4)}` : '—'}</code></div>
+                    <div className="flex justify-between"><span>Investor</span><code className="truncate max-w-[140px]">{investorWallet ? `${investorWallet.slice(0,6)}...${investorWallet.slice(-4)}` : '—'}</code></div>
+                    <div className="flex justify-between"><span>Treasury</span><code className="truncate max-w-[140px]">{treasuryWallet ? `${treasuryWallet.slice(0,6)}...${treasuryWallet.slice(-4)}` : '—'}</code></div>
+                    <div className="flex justify-between"><span>Client</span><code className="truncate max-w-[140px]">{clientWallet ? `${clientWallet.slice(0,6)}...${clientWallet.slice(-4)}` : '—'}</code></div>
+                    <div className="flex justify-between"><span>Airdrop</span><code className="truncate max-w-[140px]">{airdropWallet ? `${airdropWallet.slice(0,6)}...${airdropWallet.slice(-4)}` : '—'}</code></div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm flex items-center gap-2"><Shield className="w-4 h-4 text-green-600" />Status & Controls</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2 text-xs">
+                    <div className="flex justify-between"><span>Contract Paused</span><Badge variant={isPaused ? 'destructive' : 'default'}>{isPaused ? 'Yes' : 'No'}</Badge></div>
+                    <div className="flex justify-between"><span>Tokenomics Initialized</span><Badge variant={tokenomicsInitialized ? 'default' : 'secondary'}>{tokenomicsInitialized ? 'Yes' : 'No'}</Badge></div>
+                    <div className="flex justify-between"><span>Vesting Entries</span><span className="font-medium">{vestingCount}</span></div>
+                    <div className="flex justify-between"><span>Allocated vs Vested</span><span>{totalVested.toLocaleString()} / {totalAllocated.toLocaleString()}</span></div>
+                    <div className="flex justify-between"><span>Max Supply</span><span>{maximumSupply.toLocaleString()}</span></div>
+                    <div className="flex justify-between"><span>Current Supply</span><span>{currentSupply.toLocaleString()}</span></div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm flex items-center gap-2"><AlertTriangle className="w-4 h-4 text-yellow-600" />Risk Flags</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2 text-xs">
+                    <div className="flex justify-between"><span>Owner Set</span><span className={owner ? 'text-green-600' : 'text-red-600'}>{owner ? '✓' : '✗'}</span></div>
+                    <div className="flex justify-between"><span>Privileged Wallets</span><span className={(teamWallet && investorWallet && treasuryWallet && clientWallet && airdropWallet) ? 'text-green-600' : 'text-yellow-600'}>{(teamWallet && investorWallet && treasuryWallet && clientWallet && airdropWallet) ? 'Complete' : 'Partial'}</span></div>
+                    <div className="flex justify-between"><span>Supply Integrity</span><span className={(currentSupply <= maximumSupply) ? 'text-green-600' : 'text-red-600'}>{(currentSupply <= maximumSupply) ? 'Valid' : 'Exceeded'}</span></div>
+                    <div className="flex justify-between"><span>Paused State</span><span className={isPaused ? 'text-yellow-600' : 'text-green-600'}>{isPaused ? 'Paused' : 'Active'}</span></div>
+                    <div className="flex justify-between"><span>Tokenomics Ready</span><span className={tokenomicsInitialized ? 'text-green-600' : 'text-yellow-600'}>{tokenomicsInitialized ? 'Yes' : 'Pending'}</span></div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          {/* TRUST TAB */}
+          <TabsContent value="trust" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-lg"><Info className="w-5 h-5 text-blue-600" />Testnet Deployment & Transparency</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4 text-sm text-muted-foreground">
+                <p>This project is currently deployed on a testnet (Polygon Amoy) to minimize operational costs while validating token mechanics and security posture. All metrics shown are derived from on-chain reads and synthesized live estimations—no off-chain mutation of token state occurs here.</p>
+                <ul className="list-disc pl-5 space-y-2">
+                  <li><span className="font-medium text-foreground">Immutable Supply Cap:</span> Max supply enforced by smart contract — attempts to exceed revert.</li>
+                  <li><span className="font-medium text-foreground">Transparent Vesting:</span> Vesting allocations, released vs remaining, and beneficiary addresses shown publicly.</li>
+                  <li><span className="font-medium text-foreground">Airdrop Integrity:</span> Claims require prior inclusion; double-claims revert with errors.</li>
+                  <li><span className="font-medium text-foreground">Operational Safety:</span> Pausing mechanism available for emergency response without altering historical state.</li>
+                  <li><span className="font-medium text-foreground">Wallet Segregation:</span> Dedicated addresses for team, investors, airdrop, treasury, and client funds reduce commingling risk.</li>
+                </ul>
+                <div className="p-3 rounded-md bg-muted border text-xs leading-relaxed">
+                  <strong>Disclaimer:</strong> Testnet metrics (holders, transactions, liquidity) are simulated approximations for modeling purposes and will calibrate automatically post mainnet launch.
+                </div>
+              </CardContent>
+            </Card>
           </TabsContent>
 
           <TabsContent value="growth" className="space-y-4">
@@ -383,34 +566,34 @@ export default function AdvancedMetrics() {
           </TabsContent>
 
           <TabsContent value="health" className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-lg">
-                    <Shield className={`w-5 h-5 text-${healthMetrics?.security?.color || 'blue'}-500`} />
+                    <Shield className="w-5 h-5 text-green-500" />
                     Security Score
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="text-center space-y-2">
-                    <div className={`text-3xl font-bold text-${healthMetrics?.security?.color || 'blue'}-600`}>
-                      {healthMetrics?.security?.score || 85}/100
+                    <div className={`text-3xl font-bold ${secColor.text}`}>
+                      {securityScore}/100
                     </div>
-                    <Badge variant="default" className={`bg-${healthMetrics?.security?.color || 'blue'}-500`}>
-                      {healthMetrics?.security?.status || 'Good'}
+                    <Badge variant="default" className={`${secColor.bg}`}>
+                      {secColor.label}
                     </Badge>
                     <div className="space-y-1 text-sm text-muted-foreground">
                       <div className="flex justify-between">
-                        <span>Contract Active</span>
-                        <span className={healthMetrics?.security?.factors?.contractActive ? 'text-green-600' : 'text-red-600'}>
-                          {healthMetrics?.security?.factors?.contractActive ? '✓' : '✗'}
-                        </span>
+                        <span>Owner Set</span>
+                        <span className={owner ? 'text-green-600' : 'text-red-600'}>{owner ? '✓' : '✗'}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span>Tokenomics Live</span>
-                        <span className={healthMetrics?.security?.factors?.tokenomicsLive ? 'text-green-600' : 'text-red-600'}>
-                          {healthMetrics?.security?.factors?.tokenomicsLive ? '✓' : '✗'}
-                        </span>
+                        <span>Privileged Wallets</span>
+                        <span className={privilegedComplete ? 'text-green-600' : 'text-yellow-600'}>{privilegedComplete ? 'Complete' : 'Partial'}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Supply Integrity</span>
+                        <span className={supplyIntegrity ? 'text-green-600' : 'text-red-600'}>{supplyIntegrity ? 'Valid' : 'Exceeded'}</span>
                       </div>
                     </div>
                   </div>
@@ -420,54 +603,32 @@ export default function AdvancedMetrics() {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-lg">
-                    <Activity className={`w-5 h-5 text-${healthMetrics?.network?.color || 'blue'}-500`} />
-                    Network Health
+                    <ChartBar className="w-5 h-5 text-blue-500" />
+                    Governance Score
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="text-center space-y-2">
-                    <div className={`text-3xl font-bold text-${healthMetrics?.network?.color || 'blue'}-600`}>
-                      {healthMetrics?.network?.score || 92}/100
+                    <div className={`text-3xl font-bold ${govColor.text}`}>
+                      {governanceScore}/100
                     </div>
-                    <Badge variant="default" className={`bg-${healthMetrics?.network?.color || 'blue'}-500`}>
-                      {healthMetrics?.network?.status || 'Excellent'}
+                    <Badge variant="default" className={`${govColor.bg}`}>
+                      {govColor.label}
                     </Badge>
                     <div className="space-y-1 text-sm text-muted-foreground">
                       <div className="flex justify-between">
-                        <span>Avg Block Time</span>
-                        <span className="font-medium">{healthMetrics?.network?.avgBlockTime || '12.5'}s</span>
+                        <span>Vesting Entries</span>
+                        <span className={vestingCount > 0 ? 'text-green-600' : 'text-yellow-600'}>{vestingCount}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span>Network Status</span>
-                        <span className="font-medium">{healthMetrics?.networkStatus || 'Live'}</span>
+                        <span>Allocated vs Vested</span>
+                        <span>{totalVested.toLocaleString()} / {totalAllocated.toLocaleString()}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span>Recent Blocks</span>
-                        <span className="font-medium">{healthMetrics?.network?.recentBlocks?.length || 20}</span>
+                        <span>Tokenomics Initialized</span>
+                        <span className={tokenomicsInitialized ? 'text-green-600' : 'text-yellow-600'}>{tokenomicsInitialized ? 'Yes' : 'Pending'}</span>
                       </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-lg">
-                    <ChartBar className={`w-5 h-5 text-${healthMetrics?.ecosystem?.color || 'blue'}-500`} />
-                    Ecosystem Score
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-center space-y-2">
-                    <div className={`text-3xl font-bold text-${healthMetrics?.ecosystem?.color || 'blue'}-600`}>
-                      {healthMetrics?.ecosystem?.score || 88}/100
-                    </div>
-                    <Badge variant="default" className={`bg-${healthMetrics?.ecosystem?.color || 'blue'}-500`}>
-                      {healthMetrics?.ecosystem?.status || 'Strong'}
-                    </Badge>
-                    <p className="text-sm text-muted-foreground">
-                      Growing community adoption
-                    </p>
                   </div>
                 </CardContent>
               </Card>
