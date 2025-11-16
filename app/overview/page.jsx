@@ -101,10 +101,10 @@ export default function OverviewPage() {
       
       <TokenomicsWallets />
 
-      <section className="grid grid-cols-1 lg:grid-cols-1 gap-6">
+      {/* <section className="grid grid-cols-1 lg:grid-cols-1 gap-6"> */}
         {/* <VestingOverview /> */}
-        <ActivityFeed />
-      </section>
+        {/* <ActivityFeed /> */}
+      {/* </section> */}
 
       <SecurityAuditSection />
 
